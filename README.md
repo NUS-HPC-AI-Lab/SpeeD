@@ -4,7 +4,7 @@
 
 <p>
 <h2 align="center">SpeeDiT: Accelerating DiTs and General Diffusion Models via Principle Timestep Adjustment Training
-<h5 align="center"> If you like our project, please give us a star ⭐ on GitHub for the latest update.
+<h5 align="center"> If you like SpeeDiT, please give us a star ⭐ on GitHub for the latest update.
 </h2>
 
 ## Authors
