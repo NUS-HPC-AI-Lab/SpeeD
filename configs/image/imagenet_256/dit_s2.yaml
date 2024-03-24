@@ -1,0 +1,3 @@
+model:
+  _target_: speedit.networks.dit.DiT_S_2
+  num_classes: ${num_classes}
