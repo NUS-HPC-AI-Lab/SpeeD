@@ -19,7 +19,9 @@ We propose a general diffusion training acceleration algorithm that employs asym
 
 ### TODO list sorted by priority
 
-* [ ] Releasing SpeeDiT-XL/2 [400K](https://huggingface.co/1zeryu/SpeeDiT_XL-2_400K), 1000K, ..., 7000K checkpoints.
+ If you encounter any inconvenience with the code or have suggestions for improvements, please free free to contact  via email at ykzhou8981389@gmail.com and kai.wang@comp.nus.edu.sg.
+
+* [ ] Releasing SpeeDiT-XL/2 [400K](https://huggingface.co/1zeryu/SpeeDiT_XL-2_400K), 1000K, ..., 7000K checkpoints and public the technical report.
 
 * [ ] Upgrading the components of SpeeDiT
 
@@ -68,6 +70,8 @@ class SpeeDiffusion(SpacedDiffusion):
         self.faster = faster
         if faster:
             grad = np.gradient(self.sqrt_one_minus_alphas_cumprod)
+
+            # set the meaningful steps in diffusion, which is more important in inference
             self.meaningful_steps = np.argmax(grad < 1e-4) + 1
 
             # p2 weighting from: Perception Prioritized Training of Diffusion Models
@@ -75,25 +79,29 @@ class SpeeDiffusion(SpacedDiffusion):
             self.p2_k = 1
             self.snr = 1.0 / (1 - self.alphas_cumprod) - 1
             sqrt_one_minus_alphas_bar = torch.from_numpy(self.sqrt_one_minus_alphas_cumprod)
+            # sample more meaningful step
             p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
             self.p = F.normalize(p, p=1, dim=0)
         else:
             self.meaningful_steps = self.num_timesteps
 
     def _weights(self):
+        # process where all noise to noisy image with content has more weighting in training
+        # the weights act on the mse loss
         weights =  1 / (self.p2_k + self.snr) ** self.p2_gamma
-        weights = weights / 2
+        weights = weights
         return weights
 
     # get the weights and sampling t in training diffusion
     def t_sample(self, n, device):
         if self.faster:
             t = torch.multinomial(self.p, n // 2 + 1, replacement=True).to(device)
-            # dual sampling
+            # dual sampling, which can balance the step multiple task training
             dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
             t = torch.cat([t, dual_t], dim=0)[:n]
             weights = self._weights()
         else:
+            # if
             t = torch.randint(0, self.num_timesteps, (n,), device=device)
             weights = None
 
