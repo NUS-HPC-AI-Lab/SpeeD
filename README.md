@@ -182,7 +182,7 @@ We are grateful for the following exceptional work and generous contribution to 
 
 ## 🔒 License
 
-This code repository is based  [facebookresearch/DiT](https://github.com/facebookresearch/DiT)  which is licensed under CC-BY-NC.  See [`LICENSE.txt`](https://github.com/facebookresearch/DiT/blob/main/LICENSE.txt) for details.
+The majority of this project is released under the Apache 2.0 license as found in the [LICENSE](https://github.com/PKU-YuanGroup/Video-LLaVA/blob/main/LICENSE) file.
 
 ## ✏️Citation
 
