@@ -19,7 +19,7 @@ We propose a general diffusion training acceleration algorithm that employs asym
 
 ### TODO list sorted by priority
 
- If you encounter any inconvenience with the code or have suggestions for improvements, please feel free to contact us via email at ykzhou8981389@gmail.com and kai.wang@comp.nus.edu.sg.
+If you encounter any inconvenience with the code or have suggestions for improvements, please feel free to contact us via email at ykzhou8981389@gmail.com and kai.wang@comp.nus.edu.sg.
 
 * [ ] Releasing SpeeDiT-XL/2 [400K](https://huggingface.co/1zeryu/SpeeDiT_XL-2_400K), 1000K, ..., 7000K checkpoints and publish the technical report.
 
@@ -82,6 +82,7 @@ class SpeeDiffusion(SpacedDiffusion):
             # sample more meaningful step
             p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
             self.p = F.normalize(p, p=1, dim=0)
+            self.weights = self._weights()
         else:
             self.meaningful_steps = self.num_timesteps
 
@@ -99,7 +100,7 @@ class SpeeDiffusion(SpacedDiffusion):
             # dual sampling, which can balance the step multiple task training
             dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
             t = torch.cat([t, dual_t], dim=0)[:n]
-            weights = self._weights()
+            weights = self.weights
         else:
             # if
             t = torch.randint(0, self.num_timesteps, (n,), device=device)
