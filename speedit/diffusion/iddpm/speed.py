@@ -23,6 +23,7 @@ class SpeeDiffusion(SpacedDiffusion):
             # sample more meaningful step
             p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
             self.p = F.normalize(p, p=1, dim=0)
+            self.weights = self._weights()
         else:
             self.meaningful_steps = self.num_timesteps
 
@@ -38,7 +39,7 @@ class SpeeDiffusion(SpacedDiffusion):
             t = torch.multinomial(self.p, n // 2 + 1, replacement=True).to(device)
             dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
             t = torch.cat([t, dual_t], dim=0)[:n]
-            weights = self._weights()
+            weights = self.weights
         else:
             t = torch.randint(0, self.num_timesteps, (n,), device=device)
             weights = None
