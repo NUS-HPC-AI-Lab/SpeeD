@@ -21,7 +21,7 @@ We propose a general diffusion training acceleration algorithm that employs asym
 
  If you encounter any inconvenience with the code or have suggestions for improvements, please free free to contact  via email at ykzhou8981389@gmail.com and kai.wang@comp.nus.edu.sg.
 
-* [ ] Releasing SpeeDiT-XL/2 [400K](https://huggingface.co/1zeryu/SpeeDiT_XL-2_400K), 1000K, ..., 7000K checkpoints and public the technical report.
+* [ ] Releasing SpeeDiT-XL/2 [400K](https://huggingface.co/1zeryu/SpeeDiT_XL-2_400K), 1000K, ..., 7000K checkpoints and publish the technical report.
 
 * [ ] Upgrading the components of SpeeDiT
 
