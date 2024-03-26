@@ -8,7 +8,7 @@ ckpt_path:
 resume_training:
 
 # logging configuration
-ckpt_every: 50_000
+ckpt_every: 10000
 log_every: 100
 
 # tensorboard loss loggign

@@ -55,6 +55,8 @@ class BaseExperiment(object):
             torch.set_grad_enabled(False)
 
         save_config(config, self.output_dir)
+        if dist.is_available() and dist.is_initialized():
+            dist.barrier()
 
     def init_log(self, config):
         self.tensorboard_log = Tensorboard_log(config, path=self.log_path)
@@ -227,7 +229,7 @@ class BaseExperiment(object):
                     log_steps = 0
                     start_time = time()
 
-                if train_steps % self.ckpt_every == 0:
+                if train_steps % self.ckpt_every == 0 or train_steps == 1:
                     self.save_checkpoint(train_steps)
                     dist.barrier()
 
