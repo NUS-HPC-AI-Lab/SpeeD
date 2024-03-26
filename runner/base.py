@@ -196,6 +196,8 @@ class BaseExperiment(object):
         start_time = time()
 
         epochs = self.config.epoch
+        max_training_steps = self.config.get("max_training_steps", None)
+
         print(f"Training for {epochs} epochs...")
         for epoch in range(epochs):
             self.sampler.set_epoch(epoch)
@@ -229,6 +231,9 @@ class BaseExperiment(object):
                 if train_steps % self.ckpt_every == 0:
                     self.save_checkpoint(train_steps)
                     dist.barrier()
+
+                if max_training_steps is not None and train_steps >= max_training_steps:
+                    break
 
         self.model.eval()  # important! This disables randomized embedding dropout
         # do any sampling/FID calculation/etc. with ema (or model) in eval mode ...
