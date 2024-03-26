@@ -1,0 +1,1 @@
+torchrun --nnodes=xxx --nproc_per_node=8 main.py -c configs/image/imagenet_256/dit_xl2.yaml -p train data.dataset.root="xx" data.batch_size=64
