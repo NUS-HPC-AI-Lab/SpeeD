@@ -55,7 +55,6 @@ class BaseExperiment(object):
             torch.set_grad_enabled(False)
 
         save_config(config, self.output_dir)
-        dist.barrier()
 
     def init_log(self, config):
         self.tensorboard_log = Tensorboard_log(config, path=self.log_path)
