@@ -146,6 +146,8 @@ class BaseExperiment(object):
             print("loading model from checkpoint '{}'".format(path))
             state = torch.load(path, map_location="cpu")
             self.model.load_state_dict(state["ema"])
+        else:
+            raise ValueError("no checkpoint found at {}".format(path))
 
     def init_training(self):
         config = self.config
