@@ -16,5 +16,5 @@ data:
     root: xxx
     image_size: ${image_size}
 
-  batch_size: 64
+  batch_size: 80
   num_workers: 4

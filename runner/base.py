@@ -76,15 +76,20 @@ class BaseExperiment(object):
         print("initailize model with config", model_kwargs)
         print(f"\033[34m Parameters: {sum(p.numel() for p in self.model.parameters()):,}\033[0m")
 
-        # init diffusion
-        diffusion_kwargs = config.diffusion
-        self.diffusion = instantiate_from_config(**diffusion_kwargs)
-        print("initailize diffusion with config", diffusion_kwargs)
-
         # init vae
         vae_kwargs = config.vae
         self.vae = instantiate_from_config(**vae_kwargs)
         print("initailize vae with config", vae_kwargs)
+
+        # init condition model
+        encoder_kwargs = config.condition_encoder
+        self.encoder = instantiate_from_config(**encoder_kwargs)
+        print("initailize encoder with config", encoder_kwargs)
+
+        # init diffusion
+        diffusion_kwargs = config.diffusion
+        self.diffusion = instantiate_from_config(**diffusion_kwargs)
+        print("initailize diffusion with config", diffusion_kwargs)
 
     def init_dataset(self):
         data_config = self.config.data
@@ -179,9 +184,8 @@ class BaseExperiment(object):
         with torch.no_grad():
             # Map input images to latent space + normalize latents:
             x = self.vae.encode(x).latent_dist.sample().mul_(0.18215)
-        t, weights = self.diffusion.t_sample(x.shape[0], self.device)
-        model_kwargs = dict(y=y)
-        loss_dict = self.diffusion.training_losses(self.model, x, t, model_kwargs, weights=weights)
+            model_kwargs = self.encoder.encode(y)
+        loss_dict = self.diffusion.train_step(self.model, x, model_kwargs, device=self.device)
         loss = loss_dict["loss"].mean()
         self.opt.zero_grad()
         loss.backward()
@@ -249,24 +253,12 @@ class BaseExperiment(object):
         vae = self.vae
         n = z.shape[0]
         assert cfg_scale >= 1.0, "In almost all cases, cfg_scale be >= 1.0"
-        using_cfg = cfg_scale > 1.0
-        # Setup classifier-free guidance:
-        if using_cfg:
-            z = torch.cat([z, z], 0)
-            y_null = torch.tensor([1000] * n, device=self.device)
-            y = torch.cat([y, y_null], 0)
-            model_kwargs = dict(y=y, cfg_scale=cfg_scale)
-            sample_fn = model.forward_with_cfg
-        else:
-            model_kwargs = dict(y=y)
-            sample_fn = model.forward
+        z = torch.cat([z, z], 0)
+        model_args = self.encoder.encode(y)
+        y_null = self.encoder.null(n)
+        model_args["y"] = torch.cat([model_args["y"], y_null], 0)
 
-        # Sample images:
-        samples = diffusion.p_sample_loop(
-            sample_fn, z.shape, z, clip_denoised=False, model_kwargs=model_kwargs, progress=False, device=self.device
-        )
-        if using_cfg:
-            samples, _ = samples.chunk(2, dim=0)  # Remove null class samples
+        samples = diffusion.sample(model, z, model_args)
 
         samples = vae.decode(samples / 0.18215).sample
         samples = torch.clamp(127.5 * samples + 128.0, 0, 255).permute(0, 2, 3, 1).to("cpu", dtype=torch.uint8).numpy()

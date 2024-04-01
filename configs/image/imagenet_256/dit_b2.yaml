@@ -1,3 +1,20 @@
 model:
   _target_: speedit.networks.dit.DiT_B_2
   num_classes: ${num_classes}
+
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+  faster: true
+
+data:
+  _target_:
+  dataset:
+    _target_: speedit.dataset.image.image_dataest
+    root: /home/kwang/datasets/imagenet/train
+    image_size: ${image_size}
+
+  batch_size: 32
+  num_workers: 4
+
+max_iters: 1000000

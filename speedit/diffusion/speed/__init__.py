@@ -1,15 +1,11 @@
-# Modified from OpenAI's diffusion repos
-#     GLIDE: https://github.com/openai/glide-text2im/blob/main/glide_text2im/gaussian_diffusion.py
-#     ADM:   https://github.com/openai/guided-diffusion/blob/main/guided_diffusion
-#     IDDPM: https://github.com/openai/improved-diffusion/blob/main/improved_diffusion/gaussian_diffusion.py
-import pdb
 from functools import partial
 
 import numpy as np
 import torch
+from torch.nn import functional as F
 
-from . import gaussian_diffusion as gd
-from .respace import SpacedDiffusion, space_timesteps
+import speedit.diffusion.iddpm.gaussian_diffusion as gd
+from speedit.diffusion.iddpm.respace import SpacedDiffusion, space_timesteps
 
 
 class IDDPM(SpacedDiffusion):
@@ -48,26 +44,55 @@ class IDDPM(SpacedDiffusion):
         )
         self.cfg_scale = cfg_scale
 
-    def train_step(self, model, x, y, device):
+        grad = np.gradient(self.sqrt_one_minus_alphas_cumprod)
+
+        # set the meaningful steps in diffusion, which is more important in inference
+        self.meaningful_steps = np.argmax(grad < 1e-4) + 1
+
+        # p2 weighting from: Perception Prioritized Training of Diffusion Models
+        self.p2_gamma = 1
+        self.p2_k = 1
+        self.snr = 1.0 / (1 - self.alphas_cumprod) - 1
+        sqrt_one_minus_alphas_bar = torch.from_numpy(self.sqrt_one_minus_alphas_cumprod)
+        # sample more meaningful step
+        p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
+        self.p = F.normalize(p, p=1, dim=0)
+        self.weights = self._weights()
+
+    def _weights(self):
+        # process where all noise to noisy image with content has more weighting in training
+        # the weights act on the mse loss
+        weights = 1 / (self.p2_k + self.snr) ** self.p2_gamma
+        weights = weights
+        return weights
+
+    def train_step(self, model, x, model_kwargs, device):
         n = x.shape[0]
-        t = torch.randint(0, self.num_timesteps, (n,), device=device)
-        model_kwargs = dict(y=y)
-        loss_dict = self.training_losses(model, x, t, model_kwargs)
+        t = torch.multinomial(self.p, n // 2 + 1, replacement=True).to(device)
+        dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
+        t = torch.cat([t, dual_t], dim=0)[:n]
+        weights = self.weights
+        loss_dict = self.training_losses(model, x, t, model_kwargs, weights)
         return loss_dict
 
-    def sample(self, model, z, y, device, cfg_scale=None):
-        if cfg_scale is None:
-            cfg_scale = self.cfg_scale
+    def sample(
+        self,
+        model,
+        z,
+        model_args,
+        device,
+        cfg_scale=None,
+    ):
+        cfg_scale = cfg_scale or self.cfg_scale
 
-        model_kwargs = y
         forward = partial(forward_with_cfg, model, cfg_scale=cfg_scale)
         samples = self.p_sample_loop(
             forward,
             z.shape,
             z,
             clip_denoised=False,
-            model_kwargs=model_kwargs,
-            progress=False,
+            model_kwargs=model_args,
+            progress=True,
             device=device,
         )
         samples, _ = samples.chunk(2, dim=0)
