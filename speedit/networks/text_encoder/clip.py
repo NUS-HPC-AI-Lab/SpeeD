@@ -25,7 +25,6 @@
 
 import torch
 import torch.nn as nn
-from opensora.registry import MODELS
 
 import transformers
 from transformers import CLIPTextModel, CLIPTokenizer
@@ -78,7 +77,6 @@ class FrozenCLIPEmbedder(AbstractEncoder):
         return self(text)
 
 
-@MODELS.register_module("clip")
 class ClipEncoder:
     """
     Embeds text prompt into vector representations. Also handles text dropout for classifier-free guidance.

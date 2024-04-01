@@ -20,6 +20,8 @@ class IDDPM(SpacedDiffusion):
         rescale_learned_sigmas=False,
         diffusion_steps=1000,
         cfg_scale=4.0,
+        weighting="p2",
+        sampling="speed",
     ):
         betas = gd.get_named_beta_schedule(noise_schedule, diffusion_steps)
         if use_kl:
@@ -57,20 +59,43 @@ class IDDPM(SpacedDiffusion):
         # sample more meaningful step
         p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
         self.p = F.normalize(p, p=1, dim=0)
-        self.weights = self._weights()
+        self.weights = self._weights(weighting)
+        self.sampling = sampling
 
-    def _weights(self):
+    def _weights(self, weighting):
         # process where all noise to noisy image with content has more weighting in training
         # the weights act on the mse loss
-        weights = 1 / (self.p2_k + self.snr) ** self.p2_gamma
-        weights = weights
+        if weighting == "p2":
+            weights = 1 / (self.p2_k + self.snr) ** self.p2_gamma
+            weights = weights
+
+        elif weighting == "lognorm":
+            # todo: implemnt lognorm weighting from SD3
+            pass
+
+        else:
+            weights = None
         return weights
+
+    def _sample_time(self, n):
+        sampling = self.sampling
+
+        if sampling == "lognorm":
+            # todo: log norm sampling in SD3
+            pass
+
+        elif sampling == "speed":
+            t = torch.multinomial(self.p, n // 2 + 1, replacement=True)
+            dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
+            t = torch.cat([t, dual_t], dim=0)[:n]
+        else:
+            raise ValueError(f"Unknown sampling method: {sampling}")
+
+        return t
 
     def train_step(self, model, x, model_kwargs, device):
         n = x.shape[0]
-        t = torch.multinomial(self.p, n // 2 + 1, replacement=True).to(device)
-        dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
-        t = torch.cat([t, dual_t], dim=0)[:n]
+        t = self._sample_time(n).to(device)
         weights = self.weights
         loss_dict = self.training_losses(model, x, t, model_kwargs, weights)
         return loss_dict
