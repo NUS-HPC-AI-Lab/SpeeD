@@ -33,7 +33,18 @@ wget https://drive.google.com/open?id=1iChdwdW7mZFUyivKtDwL8ehCNhYKQz6D
 
 * LSUN
 
+ The LSUN datasets can be conveniently downloaded via the script available [here](https://github.com/fyu/lsun). We performed a custom split into training and validation images, and provide the corresponding filenames at https://ommer-lab.com/files/lsun.zip. After downloading, extract them to `./data/lsun`. The beds/cats/churches subsets should also be placed/symlinked at `./data/lsun/bedrooms`/`./data/lsun/cats`/`./data/lsun/churches`, respectively.
 
+```
+# download GitHub repo
+git clone https://github.com/fyu/lsun.git
+
+# download provided file
+wget https://ommer-lab.com/files/lsun.zip
+
+# download data with lsun.zip
+python
+```
 
 
 
@@ -45,4 +56,46 @@ wget https://drive.google.com/open?id=1iChdwdW7mZFUyivKtDwL8ehCNhYKQz6D
 
 ### Text to image
 
-* **MSCOCO**
+* **MSCOCO validation set**
+
+```
+wget http://images.cocodataset.org/zips/val2017.zip
+wget http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+
+unzip val2017.zip
+unzip annotations_trainval2017.zip
+```
+
+
+
+* **LAION 400M**
+
+project page:  [LAION-400-MILLION OPEN DATASET | LAION](https://laion.ai/blog/laion-400-open-dataset/)
+
+download scripts:   [img2dataset/dataset_examples/laion400m.md at main · rom1504/img2dataset (github.com)](https://github.com/rom1504/img2dataset/blob/main/dataset_examples/laion400m.md)
+
+[laion-400m](https://laion.ai/laion-400-open-dataset/) is a 400M image text dataset
+
+**Download the metadata**
+
+```
+wget -l1 -r --no-parent https://the-eye.eu/public/AI/cah/laion400m-met-release/laion400m-meta/
+mv the-eye.eu/public/AI/cah/laion400m-met-release/laion400m-meta/ .
+```
+
+**Download the images with img2dataset**
+
+```
+pip install img2dataset
+```
+
+```
+img2dataset --url_list laion400m-meta --input_format "parquet"\
+         --url_col "URL" --caption_col "TEXT" --output_format webdataset\
+           --output_folder laion400m-data --processes_count 16 --thread_count 128 --image_size 256\
+             --save_additional_columns '["NSFW","similarity","LICENSE"]' --enable_wandb True
+```
+
+**Benchmark**
+
+This can be downloaded at 1300 sample/s so it takes 3.5 days to download with one 16 cores 2Gbps machine. The result is 10TB
