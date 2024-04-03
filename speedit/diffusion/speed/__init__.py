@@ -5,10 +5,10 @@ import torch
 from torch.nn import functional as F
 
 import speedit.diffusion.iddpm.gaussian_diffusion as gd
-from speedit.diffusion.iddpm.respace import SpacedDiffusion, space_timesteps
+from speedit.diffusion.iddpm import IDDPM
 
 
-class IDDPM(SpacedDiffusion):
+class Speed_IDDPM(IDDPM):
     def __init__(
         self,
         timestep_respacing,
@@ -23,28 +23,17 @@ class IDDPM(SpacedDiffusion):
         weighting="p2",
         sampling="speed",
     ):
-        betas = gd.get_named_beta_schedule(noise_schedule, diffusion_steps)
-        if use_kl:
-            loss_type = gd.LossType.RESCALED_KL
-        elif rescale_learned_sigmas:
-            loss_type = gd.LossType.RESCALED_MSE
-        else:
-            loss_type = gd.LossType.MSE
-        if timestep_respacing is None or timestep_respacing == "":
-            timestep_respacing = [diffusion_steps]
-
         super().__init__(
-            use_timesteps=space_timesteps(diffusion_steps, timestep_respacing),
-            betas=betas,
-            model_mean_type=(gd.ModelMeanType.EPSILON if not predict_xstart else gd.ModelMeanType.START_X),
-            model_var_type=(
-                (gd.ModelVarType.FIXED_LARGE if not sigma_small else gd.ModelVarType.FIXED_SMALL)
-                if not learn_sigma
-                else gd.ModelVarType.LEARNED_RANGE
-            ),
-            loss_type=loss_type,
+            timestep_respacing,
+            noise_schedule,
+            use_kl,
+            sigma_small,
+            predict_xstart,
+            learn_sigma,
+            rescale_learned_sigmas,
+            diffusion_steps,
+            cfg_scale,
         )
-        self.cfg_scale = cfg_scale
 
         grad = np.gradient(self.sqrt_one_minus_alphas_cumprod)
 
@@ -71,7 +60,7 @@ class IDDPM(SpacedDiffusion):
 
         elif weighting == "lognorm":
             # todo: implemnt lognorm weighting from SD3
-            pass
+            weights = None
 
         else:
             weights = None
@@ -82,7 +71,7 @@ class IDDPM(SpacedDiffusion):
 
         if sampling == "lognorm":
             # todo: log norm sampling in SD3
-            pass
+            raise NotImplementedError
 
         elif sampling == "speed":
             t = torch.multinomial(self.p, n // 2 + 1, replacement=True)
@@ -93,45 +82,10 @@ class IDDPM(SpacedDiffusion):
 
         return t
 
-    def train_step(self, model, x, model_kwargs, device):
-        n = x.shape[0]
+    def train_step(self, model, z, y, device):
+        n = z.shape[0]
         t = self._sample_time(n).to(device)
         weights = self.weights
-        loss_dict = self.training_losses(model, x, t, model_kwargs, weights)
+        model_kwargs = y
+        loss_dict = self.training_losses(model, z, t, model_kwargs, weights=weights)
         return loss_dict
-
-    def sample(
-        self,
-        model,
-        z,
-        model_args,
-        device,
-        cfg_scale=None,
-    ):
-        cfg_scale = cfg_scale or self.cfg_scale
-
-        forward = partial(forward_with_cfg, model, cfg_scale=cfg_scale)
-        samples = self.p_sample_loop(
-            forward,
-            z.shape,
-            z,
-            clip_denoised=False,
-            model_kwargs=model_args,
-            progress=True,
-            device=device,
-        )
-        samples, _ = samples.chunk(2, dim=0)
-        return samples
-
-
-def forward_with_cfg(model, x, timestep, y, cfg_scale, **kwargs):
-    # https://github.com/openai/glide-text2im/blob/main/notebooks/text2im.ipynb
-    half = x[: len(x) // 2]
-    combined = torch.cat([half, half], dim=0)
-    model_out = model.forward(combined, timestep, y, **kwargs)
-    model_out = model_out["x"] if isinstance(model_out, dict) else model_out
-    eps, rest = model_out[:, :3], model_out[:, 3:]
-    cond_eps, uncond_eps = torch.split(eps, len(eps) // 2, dim=0)
-    half_eps = uncond_eps + cfg_scale * (cond_eps - uncond_eps)
-    eps = torch.cat([half_eps, half_eps], dim=0)
-    return torch.cat([eps, rest], dim=1)

@@ -83,7 +83,7 @@ class DiT(nn.Module):
         cond_dropout_prob=0.1,
         learn_sigma=True,
         # Conditional arguments
-        condtion="text",
+        condition="text",
         condtion_channels=512,
         num_classes=1000,
     ):
@@ -98,7 +98,7 @@ class DiT(nn.Module):
         self.t_embedder = TimestepEmbedder(hidden_size)
 
         self.y_embedder, self.use_text_encoder = get_conditional_embedding(
-            condtion, hidden_size, num_classes, cond_dropout_prob, condtion_channels
+            condition, hidden_size, num_classes, cond_dropout_prob, condtion_channels
         )
 
         num_patches = self.x_embedder.num_patches
@@ -129,7 +129,8 @@ class DiT(nn.Module):
         nn.init.constant_(self.x_embedder.proj.bias, 0)
 
         # Initialize label embedding table:
-        nn.init.normal_(self.y_embedder.embedding_table.weight, std=0.02)
+        if self.y_embedder is not None:
+            nn.init.normal_(self.y_embedder.embedding_table.weight, std=0.02)
 
         # Initialize timestep embedding MLP:
         nn.init.normal_(self.t_embedder.mlp[0].weight, std=0.02)
@@ -165,7 +166,7 @@ class DiT(nn.Module):
         imgs = x.reshape(shape=(x.shape[0], c, h * p, h * p))
         return imgs
 
-    def forward(self, x, t, y):
+    def forward(self, x, t, y=None):
         """
         Forward pass of DiT.
         x: (N, C, H, W) tensor of spatial inputs (images or latent representations of images)

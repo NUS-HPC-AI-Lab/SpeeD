@@ -1,0 +1,10 @@
+diffusion:
+  _target_: speedit.diffusion.speed.Speed_IDDPM
+  timestep_respacing: ""
+
+
+data:
+  dataset:
+    root: /data1/xinpeng/metfaces/images
+
+experiment_dir: outputs/metfaces_faster

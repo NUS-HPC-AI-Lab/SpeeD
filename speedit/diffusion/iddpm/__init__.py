@@ -51,7 +51,7 @@ class IDDPM(SpacedDiffusion):
     def train_step(self, model, x, y, device):
         n = x.shape[0]
         t = torch.randint(0, self.num_timesteps, (n,), device=device)
-        model_kwargs = dict(y=y)
+        model_kwargs = y
         loss_dict = self.training_losses(model, x, t, model_kwargs)
         return loss_dict
 
@@ -60,7 +60,11 @@ class IDDPM(SpacedDiffusion):
             cfg_scale = self.cfg_scale
 
         model_kwargs = y
-        forward = partial(forward_with_cfg, model, cfg_scale=cfg_scale)
+
+        if cfg_scale > 1.0:
+            forward = partial(forward_with_cfg, model, cfg_scale=cfg_scale)
+        else:
+            forward = model.forward
         samples = self.p_sample_loop(
             forward,
             z.shape,

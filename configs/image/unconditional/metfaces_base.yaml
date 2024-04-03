@@ -1,0 +1,10 @@
+experiment_dir: outputs/metfaces_base
+
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+
+data:
+  dataset:
+    root: /data1/xinpeng/metfaces/images

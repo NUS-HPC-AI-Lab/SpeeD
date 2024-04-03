@@ -43,7 +43,7 @@ git clone https://github.com/fyu/lsun.git
 wget https://ommer-lab.com/files/lsun.zip
 
 # download data with lsun.zip
-python
+python lsun/download.py
 ```
 
 

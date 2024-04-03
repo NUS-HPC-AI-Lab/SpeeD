@@ -1,10 +1,12 @@
 import argparse
 
 from runner.base import BaseExperiment
+from runner.unconditional import UnconditionalExperiment
 from tools.config_utils import init_experiment_config, override_phase_config, parser_override_args
 
 experiments = {
     "base": BaseExperiment,
+    "unconditional": UnconditionalExperiment,
 }
 
 

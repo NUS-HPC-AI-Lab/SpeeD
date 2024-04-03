@@ -235,7 +235,7 @@ class BaseExperiment(object):
                     log_steps = 0
                     start_time = time()
 
-                if train_steps % self.ckpt_every == 0 or train_steps == 1:
+                if train_steps % self.ckpt_every == 0:
                     self.save_checkpoint(train_steps)
                     dist.barrier()
 
@@ -273,7 +273,7 @@ class BaseExperiment(object):
         self.model = self.model.to(device)
         self.vae = self.vae.to(device)
 
-        sample_classes = self.config.sample_classes
+        sample_classes = self.config.sample_classes or 0
         n = len(sample_classes)
         z = torch.randn(n, 4, self.latent_size, self.latent_size, device=device)
         y = torch.tensor(sample_classes, device=device)
@@ -297,6 +297,7 @@ class BaseExperiment(object):
 
         self.model = self.model.to(self.device)
         self.vae = self.vae.to(self.device)
+        self.encoder = self.encoder.to(self.device)
 
     def inference(self):
         config = self.config
