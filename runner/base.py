@@ -128,7 +128,7 @@ class BaseExperiment(object):
             raise ValueError("no checkpoint found at {}".format(path))
 
     def save_checkpoint(self, train_steps):
-        if is_main_process() == 0:
+        if is_main_process():
             checkpoint = {
                 "model": self.model.module.state_dict(),
                 "ema": self.ema.state_dict(),
