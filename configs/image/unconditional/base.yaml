@@ -36,8 +36,8 @@ inference:
   per_proc_batch_size: 32
   num_samples: 5000
 
-epoch: 1400
-max_training_steps: 2_000
+epoch: 200_000
+max_training_steps: 200_000
 
 log_every: 10
-ckpt_every: 200
+ckpt_every: 10_000

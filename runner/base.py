@@ -133,7 +133,7 @@ class BaseExperiment(object):
             raise ValueError("no checkpoint found at {}".format(path))
 
     def save_checkpoint(self, train_steps):
-        if is_main_process() == 0:
+        if is_main_process():
             checkpoint = {
                 "model": self.model.module.state_dict(),
                 "ema": self.ema.state_dict(),
@@ -235,7 +235,7 @@ class BaseExperiment(object):
                     log_steps = 0
                     start_time = time()
 
-                if train_steps % self.ckpt_every == 0:
+                if train_steps % self.ckpt_every == 0 or train_steps == 5000:
                     self.save_checkpoint(train_steps)
                     dist.barrier()
 
@@ -258,7 +258,7 @@ class BaseExperiment(object):
         y_null = self.encoder.null(n)
         model_args["y"] = torch.cat([model_args["y"], y_null], 0)
 
-        samples = diffusion.sample(model, z, model_args)
+        samples = diffusion.sample(model, z, model_args, device=self.device, cfg_scale=cfg_scale)
 
         samples = vae.decode(samples / 0.18215).sample
         samples = torch.clamp(127.5 * samples + 128.0, 0, 255).permute(0, 2, 3, 1).to("cpu", dtype=torch.uint8).numpy()

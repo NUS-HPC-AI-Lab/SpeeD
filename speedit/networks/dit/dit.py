@@ -100,6 +100,7 @@ class DiT(nn.Module):
         self.y_embedder, self.use_text_encoder = get_conditional_embedding(
             condition, hidden_size, num_classes, cond_dropout_prob, condtion_channels
         )
+        self.condition = condition
 
         num_patches = self.x_embedder.num_patches
         # Will use fixed sin-cos embedding:
@@ -176,7 +177,7 @@ class DiT(nn.Module):
         x = self.x_embedder(x) + self.pos_embed  # (N, T, D), where T = H * W / patch_size ** 2
         t = self.t_embedder(t)  # (N, D)
 
-        if self.y_embedder is not None and self.condtion is not None:
+        if self.y_embedder is not None and self.condition is not None:
             y = self.y_embedder(y, self.training)  # (N, D)
             c = t + y  # (N, D)
         else:
