@@ -10,7 +10,7 @@
 ## Authors
 
 
-- Yukun Zhou<sup>1,2</sup>, [Xiaojiang Peng](https://pengxj.github.io/)<sup>1</sup>, [Hanwang Zhang](https://personal.ntu.edu.sg/hanwangzhang/)<sup>3</sup>, [Yang You](https://www.comp.nus.edu.sg/~youy/)<sup>2</sup>, and [Kai Wang](https://kaiwang960112.github.io/)<sup>2</sup>
+- Yukun Zhou<sup>1,2</sup>, [Xiaojiang Peng*](https://pengxj.github.io/)<sup>1</sup>, [Hanwang Zhang](https://personal.ntu.edu.sg/hanwangzhang/)<sup>3</sup>, [Yang You](https://www.comp.nus.edu.sg/~youy/)<sup>2</sup>, and [Kai Wang+](https://kaiwang960112.github.io/)<sup>2</sup>(* corresponding author, + project lead)
 - <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), and <sup>3</sup>[Nanyang Technological University](https://www.ntu.edu.sg/)
 
 ## Elevator roadshow of SpeeDiT
