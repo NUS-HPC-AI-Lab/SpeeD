@@ -84,7 +84,7 @@ class DiT(nn.Module):
         learn_sigma=True,
         # Conditional arguments
         condition="text",
-        condtion_channels=512,
+        condition_channels=512,
         num_classes=1000,
     ):
         super().__init__()
@@ -98,7 +98,7 @@ class DiT(nn.Module):
         self.t_embedder = TimestepEmbedder(hidden_size)
 
         self.y_embedder, self.use_text_encoder = get_conditional_embedding(
-            condition, hidden_size, num_classes, cond_dropout_prob, condtion_channels
+            condition, hidden_size, num_classes, cond_dropout_prob, condition_channels
         )
         self.condition = condition
 
@@ -130,7 +130,7 @@ class DiT(nn.Module):
         nn.init.constant_(self.x_embedder.proj.bias, 0)
 
         # Initialize label embedding table:
-        if self.y_embedder is not None:
+        if self.y_embedder is not None and not self.use_text_encoder:
             nn.init.normal_(self.y_embedder.embedding_table.weight, std=0.02)
 
         # Initialize timestep embedding MLP:

@@ -1,4 +1,4 @@
-experiment_dir: outputs/ffhq_base
+experiment_dir: /mnt/public/yuanzhihang/outputs/ffhq/base
 
 diffusion:
   _target_: speedit.diffusion.iddpm.IDDPM
@@ -7,4 +7,4 @@ diffusion:
 
 data:
   dataset:
-    root: /data1/xinpeng/metfaces/images
+    root: /mnt/public/yuanzhihang/ffhq/images256x256/

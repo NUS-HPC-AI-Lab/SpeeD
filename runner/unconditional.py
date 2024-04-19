@@ -18,7 +18,6 @@ class UnconditionalExperiment(BaseExperiment):
         super().__init__(config)
 
     def init_model_and_diffusion(self, config):
-        model_kwargs = config.model
         assert config.image_size % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)"
         self.latent_size = config.image_size // 8
 
@@ -42,7 +41,7 @@ class UnconditionalExperiment(BaseExperiment):
         with torch.no_grad():
             # Map input images to latent space + normalize latents:
             x = self.vae.encode(x).latent_dist.sample().mul_(0.18215)
-        loss_dict = self.diffusion.train_step(self.model, x, None, device=self.device)
+        loss_dict = self.diffusion.train_step(self.model, x, None, device=self.device, train_steps=train_steps)
         loss = loss_dict["loss"].mean()
         self.opt.zero_grad()
         loss.backward()
@@ -54,7 +53,7 @@ class UnconditionalExperiment(BaseExperiment):
 
     def train(self):
         self.init_training()
-        train_steps = self.start_step
+        train_steps = int(self.start_step)
         log_steps = 0
         running_loss = 0
         start_time = time()
@@ -78,7 +77,7 @@ class UnconditionalExperiment(BaseExperiment):
                 running_loss += step_kwargs["loss"].item()
 
                 # log step
-                if train_steps % self.log_every == 0 or train_steps == 1:
+                if train_steps % self.log_every == 0 or train_steps == 1 or epoch == 0:
                     # Measure training speed:
                     torch.cuda.synchronize()
                     end_time = time()
@@ -99,8 +98,8 @@ class UnconditionalExperiment(BaseExperiment):
                     self.save_checkpoint(train_steps)
                     dist.barrier()
 
-                if max_training_steps is not None and train_steps >= max_training_steps:
-                    break
+            if max_training_steps is not None and train_steps >= max_training_steps:
+                break
 
         self.model.eval()  # important! This disables randomized embedding dropout
         # do any sampling/FID calculation/etc. with ema (or model) in eval mode ...
@@ -152,7 +151,6 @@ class UnconditionalExperiment(BaseExperiment):
 
         self.model = self.model.to(self.device)
         self.vae = self.vae.to(self.device)
-        self.encoder = self.encoder.to(self.device)
 
     def inference(self):
         config = self.config
@@ -173,20 +171,20 @@ class UnconditionalExperiment(BaseExperiment):
         pbar = tqdm(pbar) if self.rank == 0 else pbar
         total = 0
 
-        cfg_scale = self.config.guidance_scale
-        print("sampling with guidance scale:", cfg_scale)
-
         for _ in pbar:
             z = torch.randn(n, self.model.in_channels, self.latent_size, self.latent_size, device=self.device)
             samples = self.sample_imgs(z, None)
+            from torchvision.utils import save_image
+
             for i, sample in enumerate(samples):
                 index = i * dist.get_world_size() + self.rank + total
-                Image.fromarray(sample).save(f"{self.sample_path}/{index:06d}.png")
+                filename = f"{self.sample_path}/{index:06d}.png"
+                save_image(sample, filename, normalize=True, value_range=(-1, 1))
             total += global_batch_size
 
         dist.barrier()
         if is_main_process():
-            create_npz_from_sample_folder(self.sample_path, config.num_samples)
+            # create_npz_from_sample_folder(self.sample_path, config.num_samples)
             print("Done.")
         dist.barrier()
         dist.destroy_process_group()

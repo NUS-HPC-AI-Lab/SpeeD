@@ -1,0 +1,5 @@
+experiment_dir: outputs/mdt/base
+
+diffusion:
+  _target_: speedit.diffusion.mask_iddpm.MASK_IDDPM
+  timestep_respacing: ""

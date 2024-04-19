@@ -5,6 +5,6 @@ diffusion:
 
 data:
   dataset:
-    root: /data1/xinpeng/metfaces/images
+    root: /home/yuanzhihang/metfaces/images
 
-experiment_dir: outputs/metfaces_faster
+experiment_dir: /mnt/public/yuanzhihang/outputs/metfaces/faster

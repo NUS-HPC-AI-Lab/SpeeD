@@ -14,11 +14,11 @@ vae:
 
 data:
   dataset:
-    _target_: speedit.dataset.image.image_dataest
+    _target_: speedit.dataset.image.image_dataset
     image_size: ${image_size}
     class_cond: false
 
-  batch_size: 8
+  batch_size: 32
   num_workers: 4
 
 model:
@@ -34,10 +34,10 @@ inference:
   diffusion:
     timestep_respacing: '250'
   per_proc_batch_size: 32
-  num_samples: 5000
+  num_samples: 10000
 
 epoch: 200_000
 max_training_steps: 200_000
 
-log_every: 10
+log_every: 100
 ckpt_every: 10_000

@@ -1,0 +1,5 @@
+experiment_dir: /mnt/public/yuanzhihang/outputs/mdt_metfaces/base
+
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""

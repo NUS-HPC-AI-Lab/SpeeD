@@ -5,7 +5,8 @@ diffusion:
 
 data:
   dataset:
-    root: /data1/xinpeng/metfaces/images
+    root: /mnt/public/yuanzhihang/ffhq/images256x256/
 
 
-experiment_dir: outputs/ffhq_faster
+
+experiment_dir: /mnt/public/yuanzhihang/outputs/ffhq/faster

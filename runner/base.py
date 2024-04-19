@@ -22,6 +22,10 @@ class BaseExperiment(object):
         self.init_device_seed(config)
         self._init_config(config)
         self.init_model_and_diffusion(config)
+        self.init_task(config)
+
+    def init_task(self, config):
+        self.num_classes = config.get("num_classes", 1)
 
     def init_device_seed(self, config):
         if config.phase in ["train", "inference"]:
@@ -65,8 +69,6 @@ class BaseExperiment(object):
         self.log_every = config.log_every
 
     def init_model_and_diffusion(self, config):
-        self.num_classes = config.num_classes
-        model_kwargs = config.model
         assert config.image_size % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)"
         self.latent_size = config.image_size // 8
 
@@ -128,7 +130,14 @@ class BaseExperiment(object):
             self.model.load_state_dict(state["model"])
             self.ema.load_state_dict(state["ema"])
             self.opt.load_state_dict(state["opt"])
-            self.start_step = state["step"]
+
+            # convert optimizer to cuda
+            for state in self.opt.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.to(self.device)
+
+            self.start_step = state["step"].item()
         else:
             raise ValueError("no checkpoint found at {}".format(path))
 
@@ -168,13 +177,14 @@ class BaseExperiment(object):
         self.init_dataset()
         self.start_step = 0
 
-        if self.config.get("resume", None) is not None:
+        if self.config.get("resume_training", None) is not None:
             self.resume_training(self.config.resume_training)
 
         self.ema = self.ema.to(self.device)
         requires_grad(self.ema, False)
         self.model = DDP(self.model.to(self.device), device_ids=[self.rank])
         self.vae = self.vae.to(self.device)
+        # self.encoder = self.encoder.to(self.device)
 
         update_ema(self.ema, self.model.module, decay=0)
         self.model.train()
@@ -197,7 +207,7 @@ class BaseExperiment(object):
 
     def train(self):
         self.init_training()
-        train_steps = self.start_step
+        train_steps = int(self.start_step)
         log_steps = 0
         running_loss = 0
         start_time = time()
@@ -211,7 +221,6 @@ class BaseExperiment(object):
             print(f"Beginning epoch {epoch}...")
             for x, y in self.loader:
                 x = x.to(self.device)
-                y = y.to(self.device)
                 step_kwargs = self.train_one_step(x, y, train_steps)
                 train_steps += 1
                 log_steps += 1
@@ -235,7 +244,7 @@ class BaseExperiment(object):
                     log_steps = 0
                     start_time = time()
 
-                if train_steps % self.ckpt_every == 0 or train_steps == 5000:
+                if train_steps % self.ckpt_every == 0 or train_steps == 1:
                     self.save_checkpoint(train_steps)
                     dist.barrier()
 

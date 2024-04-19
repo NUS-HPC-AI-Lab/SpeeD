@@ -1,0 +1,8 @@
+experiment_dir: outputs/ffhq/min_snr
+
+
+diffusion:
+  _target_: speedit.diffusion.speed.Speed_IDDPM
+  timestep_respacing: ""
+  weighting: min_snr
+  sampling: uniform

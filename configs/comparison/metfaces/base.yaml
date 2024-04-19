@@ -1,0 +1,10 @@
+data:
+  dataset:
+    root: /mnt/public/yuanzhihang/metfaces
+
+
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+experiment_dir: /mnt/public/yuanzhihang/outputs/metfaces/base
