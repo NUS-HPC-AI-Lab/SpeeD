@@ -1,0 +1,56 @@
+image_size: 256
+experiment_name: unconditional
+experiment_dir: outputs/unet/ffhq/base
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  weight_decay: 0
+
+
+vae:
+  _target_: diffusers.models.AutoencoderKL.from_pretrained
+  pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
+
+
+data:
+  dataset:
+    _target_: speedit.dataset.image.image_dataset
+    image_size: ${image_size}
+    class_cond: false
+    root: "/home/zyk/ffhq-dataset/images256x256"
+
+  batch_size: 32
+  num_workers: 4
+
+diffusion:
+  _target_: speedit.diffusion.speed.Speed_IDDPM
+  timestep_respacing: ""
+  weighting: ours
+  sampling: ours
+  k: 5
+  lam: 0.8
+  tau: 700
+
+model:
+  _target_: speedit.networks.unet.create_unet_model
+  input_size: 32
+  num_channels: 128
+  num_res_blocks: 3
+  class_cond: false
+
+sample:
+  diffusion:
+    timestep_respacing: '250'
+
+inference:
+  diffusion:
+    timestep_respacing: '250'
+  per_proc_batch_size: 32
+  num_samples: 10000
+
+epoch: 200_000
+max_training_steps: 50_000
+
+log_every: 100
+ckpt_every: 10_000

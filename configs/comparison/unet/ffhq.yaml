@@ -1,0 +1,5 @@
+data:
+  dataset:
+    root: "/data1/xinpeng/ffhq/images256x256"
+
+experiment_dir: outputs/unet/ffhq/base

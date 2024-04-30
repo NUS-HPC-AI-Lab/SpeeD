@@ -48,7 +48,7 @@ class IDDPM(SpacedDiffusion):
         )
         self.cfg_scale = cfg_scale
 
-    def train_step(self, model, x, y, device):
+    def train_step(self, model, x, y, device, **kwargs):
         n = x.shape[0]
         t = torch.randint(0, self.num_timesteps, (n,), device=device)
         model_kwargs = y

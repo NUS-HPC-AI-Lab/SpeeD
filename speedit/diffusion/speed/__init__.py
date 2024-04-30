@@ -21,8 +21,11 @@ class Speed_IDDPM(IDDPM):
         rescale_learned_sigmas=False,
         diffusion_steps=1000,
         cfg_scale=4.0,
-        weighting="p2",
-        sampling="speed",
+        weighting="ours",
+        sampling="ours",
+        k=1,
+        lam=5,
+        tau=700,
     ):
         super().__init__(
             timestep_respacing,
@@ -45,10 +48,18 @@ class Speed_IDDPM(IDDPM):
         self.p2_gamma = 1
         self.p2_k = 1
         self.snr = 1.0 / (1 - self.alphas_cumprod) - 1
-        sqrt_one_minus_alphas_bar = torch.from_numpy(self.sqrt_one_minus_alphas_cumprod)
-        # sample more meaningful step
-        p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
-        self.p = F.normalize(p, p=1, dim=0)
+        # sqrt_one_minus_alphas_bar = torch.from_numpy(self.sqrt_one_minus_alphas_cumprod)
+        # # sample more meaningful step
+        # p = torch.tanh(1e6 * (torch.gradient(sqrt_one_minus_alphas_bar)[0] - 1e-4)) + 1.5
+        self.lam = lam
+        self.k = k
+        self.tau = tau
+
+        higher = self.k
+        lower = 1
+        p = [higher] * self.tau + [lower] * (self.num_timesteps - self.tau)
+        self.p = F.normalize(torch.tensor(p, dtype=torch.float32), p=1, dim=0)
+
         self.weights = self._weights(weighting)
         self.sampling = sampling.lower()
 
@@ -64,14 +75,24 @@ class Speed_IDDPM(IDDPM):
             weights = None
 
         elif weighting == "theory":
-            weights = np.gradient(self.sqrt_one_minus_alphas_cumprod) * self.betas
-            weights = weights / weights.max()
+            weights = np.gradient(1 - self.alphas_cumprod)
+            k = 0.2
+            p = weights
+            weights = k + (1 - 2 * k) * (p - p.min()) / (p.max() - p.min())
+            return weights
 
         elif weighting == "min_snr":
             snr = (self.sqrt_alphas_cumprod / self.sqrt_one_minus_alphas_cumprod) ** 2
             k = 5
             min_snr = np.stack([snr, k * np.ones_like(snr)], axis=1).min(axis=1)[0] / (snr + 1)
             weights = min_snr
+
+        elif weighting == "ours":
+            weights = np.gradient(1 - self.alphas_cumprod)
+            k = 1 - self.lam
+            p = weights
+            weights = k + (1 - 2 * k) * (p - p.min()) / (p.max() - p.min())
+            return weights
 
         else:
             weights = None
@@ -96,6 +117,11 @@ class Speed_IDDPM(IDDPM):
             t = torch.multinomial(pi, n, replacement=True)
 
         elif sampling == "speed":
+            t = torch.multinomial(self.p, n // 2 + 1, replacement=True)
+            dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
+            t = torch.cat([t, dual_t], dim=0)[:n]
+
+        elif sampling == "ours":
             t = torch.multinomial(self.p, n // 2 + 1, replacement=True)
             dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
             t = torch.cat([t, dual_t], dim=0)[:n]

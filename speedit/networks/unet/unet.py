@@ -900,6 +900,7 @@ def create_unet_model(
     resblock_updown=False,
     use_fp16=False,
     use_new_attention_order=False,
+    **kwargs,
 ):
     image_size = input_size
     if channel_mult == "":

@@ -1,0 +1,51 @@
+image_size: 256
+experiment_name: unconditional
+experiment_dir: outputs/unet/metfaces/base
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  weight_decay: 0
+
+
+vae:
+  _target_: diffusers.models.AutoencoderKL.from_pretrained
+  pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
+
+
+data:
+  dataset:
+    _target_: speedit.dataset.image.image_dataset
+    image_size: ${image_size}
+    class_cond: false
+    root: "/data1/xinpeng/metfaces/images"
+
+  batch_size: 32
+  num_workers: 4
+
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+model:
+  _target_: speedit.networks.unet.create_unet_model
+  input_size: 32
+  num_channels: 128
+  num_res_blocks: 3
+  class_cond: false
+
+sample:
+  diffusion:
+    timestep_respacing: '250'
+
+inference:
+  diffusion:
+    timestep_respacing: '250'
+  per_proc_batch_size: 32
+  num_samples: 10000
+
+epoch: 200_000
+max_training_steps: 50_000
+
+log_every: 100
+ckpt_every: 10_000

@@ -1,0 +1,4 @@
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+  noise_schedule: linear
