@@ -29,7 +29,7 @@ diffusion:
   weighting: ours
   sampling: ours
   k: 5
-  lam: 0.8
+  lam: 0.6
   tau: 700
 
 model:

@@ -1,4 +1,4 @@
-experiment_dir: /mnt/public/yuanzhihang/outputs/mscoco/real_base
+experiment_dir: outputs/mscoco/base
 
 diffusion:
   _target_: speedit.diffusion.iddpm.IDDPM

@@ -1,4 +1,4 @@
-experiment_dir: /mnt/public/yuanzhihang/outputs/metfaces/lognorm
+experiment_dir: outputs/metfaces/lognorm
 
 
 diffusion:

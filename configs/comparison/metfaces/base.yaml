@@ -1,6 +1,6 @@
 data:
   dataset:
-    root: /mnt/public/yuanzhihang/metfaces
+    root: /home/zyk/metfaces/images
 
 
 diffusion:

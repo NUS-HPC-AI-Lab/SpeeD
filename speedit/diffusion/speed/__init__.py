@@ -141,6 +141,9 @@ class Speed_IDDPM(IDDPM):
             pi = F.normalize(torch.from_numpy(pi), p=1, dim=0)
             t = torch.multinomial(pi, n, replacement=True)
 
+        elif sampling == "no_dual":
+            t = torch.multinomial(self.p, n, replacement=True)
+
         else:
             raise NotImplementedError
 

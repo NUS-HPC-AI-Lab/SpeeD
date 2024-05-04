@@ -1,0 +1,63 @@
+# model configuration
+experiment_name: text2img
+image_size: 256
+
+# terminal information: epoch > epochs or train_steps > max_iter
+model:
+  _target_: speedit.networks.pixart.PixArt_XL_2
+
+diffusion:
+  _target_: speedit.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+vae:
+  _target_: diffusers.models.AutoencoderKL.from_pretrained
+  pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
+
+condition_encoder:
+  _target_: speedit.networks.condition.ClipEncoder
+  from_pretrained: /mnt/public/yuanzhihang/transformers/clip-vit-base-patch32
+  model_max_length: 77
+
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  weight_decay: 0
+
+data:
+  _target_:
+  dataset:
+    _target_: speedit.dataset.image.image_dataset
+    root: /mnt/public/yuanzhihang/mscoco/train2017
+    ann_path: /mnt/public/yuanzhihang/mscoco/annotations/captions_train2017.json
+    image_size: ${image_size}
+    text_cond: true
+
+  batch_size: 32
+  num_workers: 4
+
+sample:
+  guidance_scale: 3.8
+  diffusion:
+    timestep_respacing: '250'
+  prompts: ["A black Honda motorcycle parked in front of a garage.", 'A Honda motorcycle parked in a grass driveway',
+            "A cat sitting on the edge of the toilet looking toward the open bathroom door.", "A moped and utility truck next to a small building.",
+            "A stop light in the middle of a small town."]
+
+inference:
+  diffusion:
+    timestep_respacing: '250'
+  guidance_scale: 1.5
+  per_proc_batch_size: 32
+  num_samples: 30000
+  prompt_path: /mnt/public/yuanzhihang/mscoco/annotations/val.json
+
+
+epoch: 1400
+max_training_steps: 100_000
+
+log_every: 100
+ckpt_every: 20_000
+
+experiment_dir: outputs/mscoco/base

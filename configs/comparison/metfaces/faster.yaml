@@ -1,4 +1,4 @@
-experiment_dir: outputs/mscoco/faster
+experiment_dir: outputs/metfaces/faster2
 
 diffusion:
   _target_: speedit.diffusion.speed.Speed_IDDPM
