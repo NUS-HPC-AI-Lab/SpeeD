@@ -92,6 +92,8 @@ class Speed_IDDPM(IDDPM):
             k = 1 - self.lam
             p = weights
             weights = k + (1 - 2 * k) * (p - p.min()) / (p.max() - p.min())
+            weights = weights[: self.tau].tolist() + [1] * (self.num_timesteps - self.tau)
+            weights = np.array(weights)
             return weights
 
         else:

@@ -1,0 +1,9 @@
+model:
+  _target_: speedit.networks.unet.create_unet_model
+  input_size: 32
+  num_channels: 128
+  num_res_blocks: 3
+  num_classes: 1000
+  class_cond: true
+
+experiment_dir: outputs/imagenet/unet_base

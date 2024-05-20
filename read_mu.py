@@ -111,6 +111,16 @@ for ind in t:
     print("Covariances: ")
     print(gm.covariances_)
 
+    # 计算范数
+    norm = np.linalg.norm(gm.means_)
+    print("Norm: ", norm)
+
+    # 计算最小和最大特征值
+    max_eigenvalue = np.max(np.linalg.eigvals(gm.covariances_))
+    min_eigenvalue = np.min(np.linalg.eigvals(gm.covariances_))
+    print("Max eigenvalue: ", max_eigenvalue)
+    print("Min eigenvalue: ", min_eigenvalue)
+
     # save in json
 
 

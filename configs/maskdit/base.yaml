@@ -23,9 +23,9 @@ condition_encoder:
 inference:
   diffusion:
     timestep_respacing: '250'
-  guidance_scale: 1.5
+  guidance_scale: 1.0
   per_proc_batch_size: 32
-  num_samples: 5000
+  num_samples: 10_000
 
 
 sample:

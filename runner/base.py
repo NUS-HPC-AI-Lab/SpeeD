@@ -257,7 +257,7 @@ class BaseExperiment(object):
         cleanup()
 
     def sample_imgs(self, z, y, cfg_scale=1.0):
-        model = self.model.eval()
+        model = self.model
         diffusion = self.diffusion
         vae = self.vae
         n = z.shape[0]
@@ -292,6 +292,8 @@ class BaseExperiment(object):
 
         samples = self.sample_imgs(z, y, cfg_scale)
 
+        # test clip score
+
         # save images
         for i, sample in enumerate(samples):
             filename = f"{self.sample_path}/{i}.png"
@@ -302,11 +304,11 @@ class BaseExperiment(object):
     def init_inference(self):
         path = self.config.ckpt_path
         self.load_checkpoint(path)
-        self.model.eval()
+        # self.model.eval()
 
         self.model = self.model.to(self.device)
         self.vae = self.vae.to(self.device)
-        self.encoder = self.encoder.to(self.device)
+        # self.encoder = self.encoder.to(self.device)
 
     def inference(self):
         config = self.config

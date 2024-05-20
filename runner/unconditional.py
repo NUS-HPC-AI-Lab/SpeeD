@@ -126,7 +126,7 @@ class UnconditionalExperiment(BaseExperiment):
         torch.set_grad_enabled(False)
         device = "cuda" if torch.cuda.is_available() else "cpu"
         self.device = device
-        self.load_checkpoint(self.config.ckpt_path)
+        # self.load_checkpoint(self.config.ckpt_path)
         self.model = self.model.to(device)
         self.vae = self.vae.to(device)
 
@@ -188,3 +188,21 @@ class UnconditionalExperiment(BaseExperiment):
             print("Done.")
         dist.barrier()
         dist.destroy_process_group()
+
+    def clip_score(self):
+        config = self.config
+        self.init_inference()
+        n = config.per_proc_batch_size
+        global_batch_size = n * dist.get_world_size()
+        print(f"global batch size: {global_batch_size}")
+        total_samples = int(math.ceil(config.num_samples / global_batch_size) * global_batch_size)
+        print(f"Total number of images that will be sampled: {total_samples}")
+        assert total_samples % dist.get_world_size() == 0, "total_samples must be divisible by world_size"
+        samples_needed_this_gpu = int(total_samples // dist.get_world_size())
+        assert samples_needed_this_gpu % n == 0, "samples_needed_this_gpu must be divisible by the per-GPU batch size"
+        iterations = int(samples_needed_this_gpu // n)
+        pbar = range(iterations)
+
+        from tqdm import tqdm
+
+        pbar = tqdm(pbar) if self.rank == 0 else pbar

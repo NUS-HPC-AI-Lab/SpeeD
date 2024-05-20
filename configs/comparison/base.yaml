@@ -37,7 +37,7 @@ inference:
   num_samples: 10000
 
 epoch: 200_000
-max_training_steps: 50_000
+max_training_steps: 200_000
 
 log_every: 100
-ckpt_every: 10_000
+ckpt_every: 50_000
