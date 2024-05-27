@@ -4,7 +4,7 @@
 
 <p>
 <h2 align="center">A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training
-<h5 align="center"> If you like SpeeDiT, please give us a star ⭐ on GitHub for the latest update.
+<h5 align="center"> If you like SpeeD, please give us a star ⭐ on GitHub for the latest update.
 </h2>
 
 ## Authors
