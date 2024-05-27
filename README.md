@@ -10,8 +10,8 @@
 ## Authors
 
 
-- Yukun Zhou<sup>1,2</sup>, [Xiaojiang Peng*](https://pengxj.github.io/)<sup>1</sup>, [Hanwang Zhang](https://personal.ntu.edu.sg/hanwangzhang/)<sup>3</sup>, [Yang You](https://www.comp.nus.edu.sg/~youy/)<sup>2</sup>, and [Kai Wang+](https://kaiwang960112.github.io/)<sup>2</sup>(* corresponding author, + project lead)
-- <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), and <sup>3</sup>[Nanyang Technological University](https://www.ntu.edu.sg/)
+- [Kai Wang](https://kaiwang960112.github.io/)<sup>2</sup>, Yukun Zhou<sup>1,2</sup>, [Mingjia Shi](https://www.samjs.online/)<sup>2</sup>, [Zhihang Yuan](https://zhihang.cc/)<sup>3</sup>, [Yuzhang Shang](https://42shawn.github.io/)<sup>4</sup>, [Xiaojiang Peng*](https://pengxj.github.io/)<sup>1</sup>, [Hanwang Zhang](https://personal.ntu.edu.sg/hanwangzhang/)<sup>5</sup>, [Yang You](https://www.comp.nus.edu.sg/~youy/)<sup>2</sup>
+- <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), <sup>3</sup>[Infinigence-AI](https://cloud.infini-ai.com/), <sup>3</sup>[Illinois Institute of Technology](https://www.iit.edu/), and <sup>5</sup>[Nanyang Technological University](https://www.ntu.edu.sg/)
 
 ## Elevator roadshow of SpeeDiT
 
@@ -203,6 +203,6 @@ The majority of this project is released under the Apache 2.0 license as found i
   title = {SpeeDiT: Accelerating DiTs and General Diffusion Models via Principle Timestep Adjustment Training},
   month = {March},
   year = {2024},
-  url = {https://github.com/1zeryu/SpeeDiT}
+  url = {https://github.com/1zeryu/SpeeD}
 }
 ```
