@@ -3,7 +3,8 @@
 
 
 <p>
-<h2 align="center">A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training, -[paper](https://arxiv.org/pdf/2405.17403)
+<h2 align="center">A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training\\
+    [paper](https://arxiv.org/pdf/2405.17403)
 <h5 align="center"> If you like SpeeD, please give us a star ⭐ on GitHub for the latest update.
 </h2>
 
