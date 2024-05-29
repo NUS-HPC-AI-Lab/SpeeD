@@ -3,18 +3,48 @@
 
 
 <p>
-<h2 align="center">A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training
+<h2 align="center">A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training\\
+    
 <h5 align="center"> If you like SpeeD, please give us a star ⭐ on GitHub for the latest update.
 </h2>
 
-### [Paper](https://arxiv.org/pdf/2405.17403) | [Project Page](https://bdemo.github.io/SpeeD/) | [Hugging Face]()
-
-This repository contains the code and implementation details for the research paper titled "A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training." In this paper, SpeeD, a novel speed-up method for diffusion model training, is introduced.
-
+## Paper
+[arXiv](https://arxiv.org/pdf/2405.17403)
 ## Authors
 
+
 - [Kai Wang](https://kaiwang960112.github.io/)<sup>2</sup>, Yukun Zhou<sup>1,2</sup>, [Mingjia Shi](https://www.samjs.online/)<sup>2</sup>, [Zhihang Yuan](https://zhihang.cc/)<sup>3</sup>, [Yuzhang Shang](https://42shawn.github.io/)<sup>4</sup>, [Xiaojiang Peng*](https://pengxj.github.io/)<sup>1</sup>, [Hanwang Zhang](https://personal.ntu.edu.sg/hanwangzhang/)<sup>5</sup>, [Yang You](https://www.comp.nus.edu.sg/~youy/)<sup>2</sup>
-- <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), <sup>3</sup>[Infinigence-AI](https://cloud.infini-ai.com/), <sup>4</sup>[Illinois Institute of Technology](https://www.iit.edu/), and <sup>5</sup>[Nanyang Technological University](https://www.ntu.edu.sg/) [Kai, Yukun, and Mingjia contribute equally to this work. We will update this repo asap.]
+- <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), <sup>3</sup>[Infinigence-AI](https://cloud.infini-ai.com/), <sup>3</sup>[Illinois Institute of Technology](https://www.iit.edu/), and <sup>5</sup>[Nanyang Technological University](https://www.ntu.edu.sg/) [Kai, Yukun, and Mingjia contribute equally to this work. We will update this repo asap.]
+
+## Elevator roadshow of SpeeDiT
+
+We propose a general diffusion training acceleration algorithm that employs asymmetric sampling of time steps, named SpeeDiT. It can speed up DiT by 3.3 times without a decrease in FID. Ongoing experiments demonstrate that SpeeDiT can be applied to multiple diffusion-based visual generation tasks and has good compatibility with other acceleration methods. Therefore, we believe SpeeDiT can significantly reduce the cost of diffusion training, allowing more people to benefit from this exciting technological advancement!
+
+### TODO list sorted by priority
+
+If you encounter any inconvenience with the code or have suggestions for improvements, please feel free to contact us via email at ykzhou8981389@gmail.com and kai.wang@comp.nus.edu.sg.
+
+* [ ] Releasing SpeeDiT-XL/2 [400K](https://huggingface.co/1zeryu/SpeeDiT_XL-2_400K), 1000K, ..., 7000K checkpoints and publish the technical report.
+
+* [ ] Upgrading the components of SpeeDiT
+
+* [ ] Applying SpeeDiT to text2image
+
+  ​	[[Stable diffusion](https://github.com/Stability-AI/stablediffusion.git)]
+
+  ​	[[Latent Diffusion](https://github.com/CompVis/latent-diffusion)]
+
+  ​	[[Imagen](https://imagen.research.google/)]
+
+* [ ] Applying SpeeDiT to text2video
+
+  ​	[[Open-Sora](https://github.com/hpcaitech/Open-Sora/tree/main?tab=readme-ov-file)]
+
+  ​	[[Latte](https://github.com/Vchitect/Latte)]
+
+* [ ] SpeeDiT + [MDT](https://github.com/sail-sg/MDT)
+
+* [ ] More tasks (Image inpainting, 3D Generation)
 
 ## 😮 Highlights
 
@@ -25,24 +55,16 @@ Our method, which is easily compatible, can accelerate the training of diffusion
 
 
 ##  ✒️ Motivation
-<!-- 
+
 Inspired by the uphill and downhill diffusion processes in physics. The following GIF illustrates the  commonalities  between image diffusion and electron diffusion. The left  figure of electric diffusion is simulated from  [PhET/diffusion](https://phet.colorado.edu/zh_CN/simulations/diffusion). The right figure is downloaded from [OpenAI website](https://images.openai.com/blob/b196df3a-6fea-4d86-87b2-f9bb50be64c7/leaf.png?trim=0,0,0,0&width=2600).![comparision](visuals/consistency.gif)
 
 Visualization of different phases of reverse process and [uphill diffusion](https://en.wikipedia.org/wiki/Diffusion). For easy understanding, we assume that the direction of electronic velocity only has two cases: :arrow_left: and :arrow_right:.
 
-![motivation](visuals/motivation.png) -->
-
-Inspired by the following observation on the time step, we propose the re-sampling + re-weighting strategy as shown below.
-
-To take a closer look at time steps, we find that the time steps could be divided into three areas: acceleration, decceleration and convergence areas. Samples of the corresponding time step in the convergence region are of limited benefit to training, while these time steps take up the most. Empirically, the training losses of these samples are quite low compare to the ones of the other two areas.
-![motivation](visuals/Findings.png)
-Re-sampling: Suppress the attendance of the time step in convergence areas.
-Weighting: The faster changing time steps in the diffusion process are given more weight.
-![method](visuals/Method.png)
+![motivation](visuals/motivation.png)
 
 ##  🔆 Method
 
-We use the sampling and weighting strategy which are simple and easily compatible to achieve the acceleration. The following is the core code  [SpeeD/speed/diffusion/iddpm/speed.py](https://github.com/kaiwang960112/SpeeD/blob/master/speed/diffusion/iddpm/speed.py) ,
+We use the sampling and weighting strategy which are simple and easily compatible to achieve the acceleration. The following is the core code  [SpeeDiT/speedit/diffusion/iddpm/speed.py](https://github.com/1zeryu/SpeeDiT/blob/master/speedit/diffusion/iddpm/speed.py) ,
 
 ```python
 class SpeeDiffusion(SpacedDiffusion):
@@ -109,7 +131,7 @@ You can create a new conda environment:
 
 ```
 conda env create -f environment.yml
-conda activate speed
+conda activate speedit
 ```
 
 or install the necessary package by:
@@ -126,7 +148,7 @@ We provide a complete process for generating tasks including **training**, **inf
 
 We refactor the [facebookresearch/DiT](https://github.com/facebookresearch/DiT) code and loaded the configs using  [OmegaConf ](https://omegaconf.readthedocs.io/en/2.3_branch/). The configuration file loading rule is  recursive for easier argument modification. Simply put, the file in the latter path will override the previous setting of **base.yaml**.
 
-You can modify the experiment setting by modifying the config file and the command line. More details about the reading of config are written in  [configs/README.md](https://github.com/kaiwang960112/SpeeD/blob/master/configs/README.md).
+You can modify the experiment setting by modifying the config file and the command line. More details about the reading of config are written in  [configs/README.md](https://github.com/1zeryu/SpeeDiT/blob/master/configs/README.md).
 
 For each experiment, you must provide two arguments by command,
 
@@ -150,7 +172,7 @@ python main.py -c configs/image/imagenet_256/base.yaml -p sample
 
 **How to do ablation?**
 
-You can modify the experiment setting by modifying the config file and the command line. More details about the reading of config are written in  [configs/README.md](https://github.com/kaiwang960112/SpeeD/blob/master/configs/README.md).
+You can modify the experiment setting by modifying the config file and the command line. More details about the reading of config are written in  [configs/README.md](https://github.com/1zeryu/SpeeDiT/blob/master/configs/README.md).
 
 For example,  change the classifier-free guidance scale in sampling by command line:
 
@@ -160,7 +182,7 @@ python main.py -c configs/image/imagenet_256/base.yaml -p sample guidance_scale=
 
 ### Test
 
-Test the generation tasks require the results of inference. The more details about testing in  [evaluations](https://github.com/kaiwang960112/SpeeD/tree/master/evaluations).
+Test the generation tasks require the results of inference. The more details about testing in  [evaluations](https://github.com/1zeryu/SpeeDiT/tree/master/evaluations).
 
 ## 👍 Acknowledgement
 
@@ -179,19 +201,18 @@ The majority of this project is released under the Apache 2.0 license as found i
  If you find our code useful in your research, please consider giving a star ⭐ and citation 📝.
 
 ```
-@software{speed,
+@software{speedit,
   author = {Yukun Zhou, Kai Wang, Hanwang Zhang, Yang You and Xiaojiang Peng},
-  title = {SpeeD: A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training},
+  title = {SpeeDiT: Accelerating DiTs and General Diffusion Models via Principle Timestep Adjustment Training},
   month = {March},
   year = {2024},
-  url = {https://github.com/kaiwang960112/SpeeD}
+  url = {https://github.com/1zeryu/SpeeD}
 }
 ```
 ```
-@article{wang2024closer,
-      title={A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training}, 
-      author={Kai Wang, Yukun Zhou, Mingjia Shi, Zhihang Yuan, Yuzhang Shang, Xiaojiang Peng, Hanwang Zhang and Yang You},
-      year={2024},
-      journal={arXiv preprint arXiv:2405.17403},
+@article{speed,
+author ={Kai Wang,Yukun Zhou,Mingjia Shi,Zhihang Yuan,Yuzhang Shang,Xiaojiang Peng,Hanwang Zhang,Yang You},
+title = {A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training},
+year ={2024},
 }
 ```
