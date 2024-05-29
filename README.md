@@ -207,9 +207,10 @@ The majority of this project is released under the Apache 2.0 license as found i
 }
 ```
 ```
-@article{speed,
-author ={Kai Wang,Yukun Zhou,Mingjia Shi,Zhihang Yuan,Yuzhang Shang,Xiaojiang Peng,Hanwang Zhang,Yang You},
-title = {A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training},
-year ={2024},
+@article{wang2024closer,
+      title={A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training}, 
+      author={Kai Wang, Yukun Zhou, Mingjia Shi, Zhihang Yuan, Yuzhang Shang, Xiaojiang Peng, Hanwang Zhang and Yang You},
+      year={2024},
+      journal={arXiv preprint arXiv:2405.17403},
 }
 ```

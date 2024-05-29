@@ -1,6 +1,6 @@
 # Loading config
 
-The code of config loading can find in  [SpeeDiT/tools/config_utils.py](https://github.com/1zeryu/SpeeDiT/blob/master/tools/config_utils.py).
+The code of config loading can find in  [SpeeD/tools/config_utils.py](https://github.com/kaiwang960112/SpeeD/blob/master/tools/config_utils.py).
 
 ## Recursive strategy
 

@@ -4,11 +4,11 @@ image_size: 256
 
 # terminal information: epoch > epochs or train_steps > max_iter
 model:
-  _target_: speedit.networks.dit.DiT_XL_2
+  _target_: speed.networks.dit.DiT_XL_2
   num_classes: ${num_classes}
 
 diffusion:
-  _target_: speedit.diffusion.iddpm.IDDPM
+  _target_: speed.diffusion.iddpm.IDDPM
   timestep_respacing: ""
   faster: true
 
@@ -40,7 +40,7 @@ optimizer:
 data:
   _target_:
   dataset:
-    _target_: speedit.dataset.image.image_dataest
+    _target_: speed.dataset.image.image_dataest
     root: /home/kwang/datasets/imagenet/train
     image_size: ${image_size}
 
