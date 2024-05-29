@@ -42,7 +42,7 @@ Asymmetric Sampling: Suppress the attendance of the time step in convergence are
 Change-Aware Weighting: The faster changing time steps in the diffusion process are given more weight.
 ![method](visuals/Method.png)
 
-##  🔆 Method
+<!-- ##  🔆 Method
 
 We use the sampling and weighting strategy which are simple and easily compatible to achieve the acceleration. The following is the core code  [SpeeD/speed/diffusion/iddpm/speed.py](https://github.com/kaiwang960112/SpeeD/blob/master/speed/diffusion/iddpm/speed.py) ,
 
@@ -99,7 +99,7 @@ class SpeeDiffusion(SpacedDiffusion):
 diffusion:
     timestep_respacing: '250'
     faster: true  #enabl module for training acceleration
-```
+``` -->
 
 
 
