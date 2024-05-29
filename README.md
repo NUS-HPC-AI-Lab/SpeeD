@@ -36,8 +36,10 @@ Inspired by the following observation on time steps, we propose the re-sampling 
 
 To take a closer look at time steps, we find that the time steps could be divided into three areas: acceleration, decceleration and convergence areas. Samples of the corresponding time step in the convergence area are of limited benefit to training, while these time steps take up the most. Empirically, the training losses of these samples are quite low compare to the ones of the other two areas.
 ![motivation](visuals/Findings.png)
-Re-sampling: Suppress the attendance of the time step in convergence areas.
-Weighting: The faster changing time steps in the diffusion process are given more weight.
+
+Asymmetric Sampling: Suppress the attendance of the time step in convergence areas.
+
+Change-Aware Weighting: The faster changing time steps in the diffusion process are given more weight.
 ![method](visuals/Method.png)
 
 ##  🔆 Method
