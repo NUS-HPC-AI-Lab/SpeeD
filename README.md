@@ -11,7 +11,7 @@
 
 
 - [Kai Wang](https://kaiwang960112.github.io/)<sup>2</sup>, Yukun Zhou<sup>1,2</sup>, [Mingjia Shi](https://www.samjs.online/)<sup>2</sup>, [Zhihang Yuan](https://zhihang.cc/)<sup>3</sup>, [Yuzhang Shang](https://42shawn.github.io/)<sup>4</sup>, [Xiaojiang Peng*](https://pengxj.github.io/)<sup>1</sup>, [Hanwang Zhang](https://personal.ntu.edu.sg/hanwangzhang/)<sup>5</sup>, [Yang You](https://www.comp.nus.edu.sg/~youy/)<sup>2</sup>
-- <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), <sup>3</sup>[Infinigence-AI](https://cloud.infini-ai.com/), <sup>3</sup>[Illinois Institute of Technology](https://www.iit.edu/), and <sup>5</sup>[Nanyang Technological University](https://www.ntu.edu.sg/) [Kai, Yukun, and Mingjia contribute equally to this work. We will update this repo asap.]
+- <sup>1</sup>[Shenzhen Technology University](https://english.sztu.edu.cn/), <sup>2</sup>[National University of Singapore](https://nus.edu.sg/), <sup>3</sup>[Infinigence-AI](https://cloud.infini-ai.com/), <sup>4</sup>[Illinois Institute of Technology](https://www.iit.edu/), and <sup>5</sup>[Nanyang Technological University](https://www.ntu.edu.sg/) [Kai, Yukun, and Mingjia contribute equally to this work. We will update this repo asap.]
 
 ## Elevator roadshow of SpeeD
 
