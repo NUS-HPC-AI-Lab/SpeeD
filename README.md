@@ -122,7 +122,7 @@ pip install -r requirements.txt
 
 If necessary, we will provide more methods (e.g., docker) to facilitate the configuration of the experimental environment.
 
-## 🗝️ Implementation
+## 🗝️ Tutorial
 
 We provide a complete process for generating tasks including **training**, **inference** and **test**. The current code is only compatible with class-conditional image generation tasks. We will be compatible with more generation tasks about diffusion in the future.
 
@@ -139,7 +139,9 @@ For each experiment, you must provide two arguments by command,
 
 ### Train & inference
 
-For example, class-conditional image generation task with 256x256 ImageNet dataset and DiT-XL/2 models.
+**Baseline**
+
+Class-conditional image generation task with 256x256 ImageNet dataset and DiT-XL/2 models.
 
 ```bash
 # Training: training diffusion and saving checkpoints
@@ -150,9 +152,9 @@ torchrun --nproc_per_node=8 main.py -c configs/image/imagenet_256/base.yaml -p i
 python main.py -c configs/image/imagenet_256/base.yaml -p sample
 ```
 
-**How to do ablation?**
+**Ablation**
 
-You can modify the experiment setting by modifying the config file and the command line. More details about the reading of config are written in  [configs/README.md](https://github.com/kaiwang960112/SpeeD/blob/master/configs/README.md).
+You can modify the experiment setting by modifying the config file and the command line. More details about the configs are in [configs/README.md](https://github.com/kaiwang960112/SpeeD/blob/master/configs/README.md).
 
 For example,  change the classifier-free guidance scale in sampling by command line:
 
@@ -163,14 +165,6 @@ python main.py -c configs/image/imagenet_256/base.yaml -p sample guidance_scale=
 ### Test
 
 Test the generation tasks require the results of inference. The more details about testing in  [evaluations](https://github.com/kaiwang960112/SpeeD/tree/master/evaluations).
-
-## 👍 Acknowledgement
-
-We are grateful for the following exceptional work and generous contribution to open source.
-
-* [DiT](https://github.com/facebookresearch/DiT): Scalable Diffusion Models with Transformers.
-* [Open-Sora](https://github.com/hpcaitech/Open-Sora/tree/main) : Open-Sora: Democratizing Efficient Video Production for All
-* [OpenDiT](https://github.com/NUS-HPC-AI-Lab/OpenDiT): An acceleration for DiT training. We adopt valuable acceleration strategies for training progress from OpenDiT.
 
 ## 🔒 License
 
@@ -197,3 +191,13 @@ The majority of this project is released under the Apache 2.0 license as found i
       journal={arXiv preprint arXiv:2405.17403},
 }
 ```
+
+## 👍 Acknowledgement
+
+We thank Tianyi Li, Yuchen Zhang, Yuxin Li, Zhaoyang Zeng, and Yanqing Liu for the comments on this work. Kai Wang (idea, writing, story, presentation), Yukun Zhou (implementation), and Mingjia Shi (theory, writing, presentation) contribute equally to this work. Xiaojiang Peng, Hanwang Zhang, and Yang You are equal advising. Xiaojiang Peng is the corresponding author.
+
+We are grateful for the following exceptional work and generous contribution to open source.
+
+* [DiT](https://github.com/facebookresearch/DiT): Scalable Diffusion Models with Transformers.
+* [Open-Sora](https://github.com/hpcaitech/Open-Sora/tree/main) : Open-Sora: Democratizing Efficient Video Production for All
+* [OpenDiT](https://github.com/NUS-HPC-AI-Lab/OpenDiT): An acceleration for DiT training. We adopt valuable acceleration strategies for training progress from OpenDiT.
