@@ -175,15 +175,6 @@ The majority of this project is released under the Apache 2.0 license as found i
  If you find our code useful in your research, please consider giving a star ⭐ and citation 📝.
 
 ```
-@software{speed,
-  author = {Yukun Zhou, Kai Wang, Hanwang Zhang, Yang You and Xiaojiang Peng},
-  title = {SpeeD: A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training},
-  month = {March},
-  year = {2024},
-  url = {https://github.com/kaiwang960112/SpeeD}
-}
-```
-```
 @article{wang2024closer,
       title={A Closer Look at Time Steps is Worthy of Triple Speed-Up for Diffusion Model Training}, 
       author={Kai Wang, Yukun Zhou, Mingjia Shi, Zhihang Yuan, Yuzhang Shang, Xiaojiang Peng, Hanwang Zhang and Yang You},
