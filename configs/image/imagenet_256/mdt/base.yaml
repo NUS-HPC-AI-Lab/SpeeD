@@ -4,7 +4,7 @@ image_size: 256
 
 # terminal information: epoch > epochs or train_steps > max_iter
 model:
-  _target_: speedit.networks.dit.mdt.MDTv2_XL_2
+  _target_: speed.networks.dit.mdt.MDTv2_XL_2
   mask_ratio: 0.3
   condition: 'class'
   num_classes: ${num_classes}
@@ -14,7 +14,7 @@ vae:
   pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
 
 condition_encoder:
-  _target_: speedit.networks.condition.ClassEncoder
+  _target_: speed.networks.condition.ClassEncoder
   num_classes: ${num_classes}
 
 inference:
@@ -40,8 +40,8 @@ optimizer:
 data:
   _target_:
   dataset:
-    _target_: speedit.dataset.image.image_dataset
-    root: /data1/xinpeng/imagenet/train
+    _target_: speed.dataset.image.image_dataset
+    root: "root_path_dataset_ImageNet"
     image_size: ${image_size}
     class_cond: true
 

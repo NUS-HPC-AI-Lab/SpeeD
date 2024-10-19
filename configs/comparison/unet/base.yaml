@@ -15,20 +15,20 @@ vae:
 
 data:
   dataset:
-    _target_: speedit.dataset.image.image_dataset
+    _target_: speed.dataset.image.image_dataset
     image_size: ${image_size}
     class_cond: false
-    root: "/data1/xinpeng/metfaces/images"
+    root: "root_path_dataset"
 
   batch_size: 32
   num_workers: 4
 
 diffusion:
-  _target_: speedit.diffusion.iddpm.IDDPM
+  _target_: speed.diffusion.iddpm.IDDPM
   timestep_respacing: ""
 
 model:
-  _target_: speedit.networks.unet.create_unet_model
+  _target_: speed.networks.unet.create_unet_model
   input_size: 32
   num_channels: 128
   num_res_blocks: 3

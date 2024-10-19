@@ -1,9 +1,9 @@
 data:
   dataset:
-    root: /home/zyk/ffhq-dataset/images256x256
+    root: "root_path_dataset"
 
 diffusion:
-  _target_: speedit.diffusion.iddpm.IDDPM
+  _target_: speed.diffusion.iddpm.IDDPM
   timestep_respacing: ""
 
 experiment_dir: outputs/ffhq/base

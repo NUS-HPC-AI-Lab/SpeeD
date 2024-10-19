@@ -14,16 +14,16 @@ vae:
 
 data:
   dataset:
-    _target_: speedit.dataset.image.image_dataset
+    _target_: speed.dataset.image.image_dataset
     image_size: ${image_size}
     class_cond: false
-    root: /mnt/public/yuanzhihang/metfaces
+    root: "root_path_dataset"
 
   batch_size: 32
   num_workers: 4
 
 model:
-  _target_: speedit.networks.dit.mdt.MDTv2_XL_2
+  _target_: speed.networks.dit.mdt.MDTv2_XL_2
   condition: none
   mask_ratio: 0.3
 

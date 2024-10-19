@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from speedit.networks.layers.blocks import (
+from speed.networks.layers.blocks import (
     Attention,
     Mlp,
     PatchEmbed,

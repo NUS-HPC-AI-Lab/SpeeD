@@ -4,10 +4,10 @@ image_size: 256
 
 # terminal information: epoch > epochs or train_steps > max_iter
 model:
-  _target_: speedit.networks.pixart.PixArt_XL_2
+  _target_: speed.networks.pixart.PixArt_XL_2
 
 diffusion:
-  _target_: speedit.diffusion.iddpm.IDDPM
+  _target_: speed.diffusion.iddpm.IDDPM
   timestep_respacing: ""
 
 vae:
@@ -15,8 +15,8 @@ vae:
   pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
 
 condition_encoder:
-  _target_: speedit.networks.condition.ClipEncoder
-  from_pretrained: /mnt/public/yuanzhihang/transformers/clip-vit-base-patch32
+  _target_: speed.networks.condition.ClipEncoder
+  from_pretrained: transformers/clip-vit-base-patch32
   model_max_length: 77
 
 
@@ -28,9 +28,9 @@ optimizer:
 data:
   _target_:
   dataset:
-    _target_: speedit.dataset.image.image_dataset
-    root: /mnt/public/yuanzhihang/mscoco/train2017
-    ann_path: /mnt/public/yuanzhihang/mscoco/annotations/captions_train2017.json
+    _target_: speed.dataset.image.image_dataset
+    root: "root_path_dataset_mscoco+ /train2017"
+    ann_path: "root_path_dataset_mscoco + /annotations/captions_train2017.json"
     image_size: ${image_size}
     text_cond: true
 
@@ -51,7 +51,7 @@ inference:
   guidance_scale: 1.5
   per_proc_batch_size: 32
   num_samples: 30000
-  prompt_path: /mnt/public/yuanzhihang/mscoco/annotations/val.json
+  prompt_path: "root_path_dataset_mscoco + /annotations/val.json"
 
 
 epoch: 1400

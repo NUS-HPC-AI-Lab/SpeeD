@@ -4,9 +4,9 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
-import speedit.diffusion.iddpm.gaussian_diffusion as gd
-from speedit.diffusion.iddpm import IDDPM
-from speedit.diffusion.mask_iddpm import MASK_IDDPM
+import speed.diffusion.iddpm.gaussian_diffusion as gd
+from speed.diffusion.iddpm import IDDPM
+from speed.diffusion.mask_iddpm import MASK_IDDPM
 
 
 class Speed_IDDPM(IDDPM):

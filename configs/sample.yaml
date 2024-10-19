@@ -4,12 +4,12 @@ image_size: 512
 
 # terminal information: epoch > epochs or train_steps > max_iter
 model:
-  _target_: speedit.networks.dit.DiT_XL_2
+  _target_: speed.networks.dit.DiT_XL_2
   condition: 'class'
   num_classes: ${num_classes}
 
 diffusion:
-  _target_: speedit.diffusion.iddpm.IDDPM
+  _target_: speed.diffusion.iddpm.IDDPM
   timestep_respacing: ""
 
 vae:
@@ -17,7 +17,7 @@ vae:
   pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
 
 condition_encoder:
-  _target_: speedit.networks.condition.ClassEncoder
+  _target_: speed.networks.condition.ClassEncoder
   num_classes: ${num_classes}
 
 inference:
@@ -43,8 +43,8 @@ optimizer:
 data:
   _target_:
   dataset:
-    _target_: speedit.dataset.image.image_dataset
-    root: /home/kwang/datasets/imagenet/train
+    _target_: speed.dataset.image.image_dataset
+    root: "root_path_dataset_ImageNet"
     image_size: ${image_size}
     class_cond: true
 

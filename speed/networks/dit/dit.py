@@ -14,7 +14,7 @@ import torch
 import torch.nn as nn
 from timm.models.vision_transformer import Attention, Mlp, PatchEmbed
 
-from speedit.networks.layers.blocks import TimestepEmbedder, get_2d_sincos_pos_embed, get_conditional_embedding
+from speed.networks.layers.blocks import TimestepEmbedder, get_2d_sincos_pos_embed, get_conditional_embedding
 
 
 def modulate(x, shift, scale):
