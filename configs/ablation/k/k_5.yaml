@@ -1,0 +1,4 @@
+experiment_dir: outputs/abl/k_5
+
+diffusion:
+  k: 5

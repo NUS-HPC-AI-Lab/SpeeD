@@ -1,0 +1,58 @@
+# model configuration
+num_classes: 1000
+image_size: 256
+
+# terminal information: epoch > epochs or train_steps > max_iter
+model:
+  _target_: speed.networks.dit.DiT_XL_2
+  condition: 'class'
+  num_classes: ${num_classes}
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+vae:
+  _target_: diffusers.models.AutoencoderKL.from_pretrained
+  pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
+
+condition_encoder:
+  _target_: speed.networks.condition.ClassEncoder
+  num_classes: ${num_classes}
+
+inference:
+  diffusion:
+    timestep_respacing: '250'
+  guidance_scale: 1.0
+  per_proc_batch_size: 32
+  num_samples: 10_000
+
+
+sample:
+  guidance_scale: 3.8
+  diffusion:
+    timestep_respacing: '250'
+  sample_classes: [207, 360]
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  weight_decay: 0
+
+
+data:
+  _target_:
+  dataset:
+    _target_: speed.dataset.image.image_dataset
+    root: "root_path_dataset_ImageNet"
+    image_size: ${image_size}
+    class_cond: true
+
+  batch_size: 32
+  num_workers: 4
+
+epoch: 1400
+max_training_steps: 400_000
+
+log_every: 100
+ckpt_every: 50_000

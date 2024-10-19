@@ -1,3 +1,30 @@
 model:
   _target_: speed.networks.dit.DiT_S_2
   num_classes: ${num_classes}
+
+experiment_dir: outputs/dit_s2_faster
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+  faster: true
+
+data:
+  _target_:
+  dataset:
+    _target_: speed.dataset.image.image_dataest
+    root: "root_path_dataset_ImageNet"
+    image_size: ${image_size}
+
+  batch_size: 32
+  num_workers: 4
+
+inference:
+  diffusion:
+    timestep_respacing: '250'
+  guidance_scale: 1
+  per_proc_batch_size: 32
+  num_samples: 10_000
+
+
+max_iters: 1000000

@@ -1,0 +1,6 @@
+experiment_dir: outputs/component/weight
+
+diffusion:
+  sampling: uniform
+  weighting: ours
+  lam: 0.6

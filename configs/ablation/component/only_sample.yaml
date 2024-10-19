@@ -1,0 +1,5 @@
+experiment_dir: outputs/component/only_sample
+
+diffusion:
+  sampling: no_dual
+  weighting: none

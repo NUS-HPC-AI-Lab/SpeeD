@@ -22,6 +22,10 @@ class BaseExperiment(object):
         self.init_device_seed(config)
         self._init_config(config)
         self.init_model_and_diffusion(config)
+        self.init_task(config)
+
+    def init_task(self, config):
+        self.num_classes = config.get("num_classes", 1)
 
     def init_device_seed(self, config):
         if config.phase in ["train", "inference"]:
@@ -65,8 +69,6 @@ class BaseExperiment(object):
         self.log_every = config.log_every
 
     def init_model_and_diffusion(self, config):
-        self.num_classes = config.num_classes
-        model_kwargs = config.model
         assert config.image_size % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)"
         self.latent_size = config.image_size // 8
 
@@ -76,15 +78,20 @@ class BaseExperiment(object):
         print("initailize model with config", model_kwargs)
         print(f"\033[34m Parameters: {sum(p.numel() for p in self.model.parameters()):,}\033[0m")
 
-        # init diffusion
-        diffusion_kwargs = config.diffusion
-        self.diffusion = instantiate_from_config(**diffusion_kwargs)
-        print("initailize diffusion with config", diffusion_kwargs)
-
         # init vae
         vae_kwargs = config.vae
         self.vae = instantiate_from_config(**vae_kwargs)
         print("initailize vae with config", vae_kwargs)
+
+        # init condition model
+        encoder_kwargs = config.condition_encoder
+        self.encoder = instantiate_from_config(**encoder_kwargs)
+        print("initailize encoder with config", encoder_kwargs)
+
+        # init diffusion
+        diffusion_kwargs = config.diffusion
+        self.diffusion = instantiate_from_config(**diffusion_kwargs)
+        print("initailize diffusion with config", diffusion_kwargs)
 
     def init_dataset(self):
         data_config = self.config.data
@@ -123,7 +130,14 @@ class BaseExperiment(object):
             self.model.load_state_dict(state["model"])
             self.ema.load_state_dict(state["ema"])
             self.opt.load_state_dict(state["opt"])
-            self.start_step = state["step"]
+
+            # convert optimizer to cuda
+            for state in self.opt.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.to(self.device)
+
+            self.start_step = state["step"].item()
         else:
             raise ValueError("no checkpoint found at {}".format(path))
 
@@ -146,6 +160,8 @@ class BaseExperiment(object):
             print("loading model from checkpoint '{}'".format(path))
             state = torch.load(path, map_location="cpu")
             self.model.load_state_dict(state["ema"])
+        else:
+            raise ValueError("no checkpoint found at {}".format(path))
 
     def init_training(self):
         config = self.config
@@ -161,13 +177,14 @@ class BaseExperiment(object):
         self.init_dataset()
         self.start_step = 0
 
-        if self.config.get("resume", None) is not None:
+        if self.config.get("resume_training", None) is not None:
             self.resume_training(self.config.resume_training)
 
         self.ema = self.ema.to(self.device)
         requires_grad(self.ema, False)
         self.model = DDP(self.model.to(self.device), device_ids=[self.rank])
         self.vae = self.vae.to(self.device)
+        # self.encoder = self.encoder.to(self.device)
 
         update_ema(self.ema, self.model.module, decay=0)
         self.model.train()
@@ -177,9 +194,8 @@ class BaseExperiment(object):
         with torch.no_grad():
             # Map input images to latent space + normalize latents:
             x = self.vae.encode(x).latent_dist.sample().mul_(0.18215)
-        t, weights = self.diffusion.t_sample(x.shape[0], self.device)
-        model_kwargs = dict(y=y)
-        loss_dict = self.diffusion.training_losses(self.model, x, t, model_kwargs, weights=weights)
+            model_kwargs = self.encoder.encode(y)
+        loss_dict = self.diffusion.train_step(self.model, x, model_kwargs, device=self.device)
         loss = loss_dict["loss"].mean()
         self.opt.zero_grad()
         loss.backward()
@@ -191,7 +207,7 @@ class BaseExperiment(object):
 
     def train(self):
         self.init_training()
-        train_steps = self.start_step
+        train_steps = int(self.start_step)
         log_steps = 0
         running_loss = 0
         start_time = time()
@@ -205,7 +221,6 @@ class BaseExperiment(object):
             print(f"Beginning epoch {epoch}...")
             for x, y in self.loader:
                 x = x.to(self.device)
-                y = y.to(self.device)
                 step_kwargs = self.train_one_step(x, y, train_steps)
                 train_steps += 1
                 log_steps += 1
@@ -229,7 +244,7 @@ class BaseExperiment(object):
                     log_steps = 0
                     start_time = time()
 
-                if train_steps % self.ckpt_every == 0:
+                if train_steps % self.ckpt_every == 0 or train_steps == 1:
                     self.save_checkpoint(train_steps)
                     dist.barrier()
 
@@ -242,29 +257,17 @@ class BaseExperiment(object):
         cleanup()
 
     def sample_imgs(self, z, y, cfg_scale=1.0):
-        model = self.model.eval()
+        model = self.model
         diffusion = self.diffusion
         vae = self.vae
         n = z.shape[0]
         assert cfg_scale >= 1.0, "In almost all cases, cfg_scale be >= 1.0"
-        using_cfg = cfg_scale > 1.0
-        # Setup classifier-free guidance:
-        if using_cfg:
-            z = torch.cat([z, z], 0)
-            y_null = torch.tensor([1000] * n, device=self.device)
-            y = torch.cat([y, y_null], 0)
-            model_kwargs = dict(y=y, cfg_scale=cfg_scale)
-            sample_fn = model.forward_with_cfg
-        else:
-            model_kwargs = dict(y=y)
-            sample_fn = model.forward
+        z = torch.cat([z, z], 0)
+        model_args = self.encoder.encode(y)
+        y_null = self.encoder.null(n)
+        model_args["y"] = torch.cat([model_args["y"], y_null], 0)
 
-        # Sample images:
-        samples = diffusion.p_sample_loop(
-            sample_fn, z.shape, z, clip_denoised=False, model_kwargs=model_kwargs, progress=False, device=self.device
-        )
-        if using_cfg:
-            samples, _ = samples.chunk(2, dim=0)  # Remove null class samples
+        samples = diffusion.sample(model, z, model_args, device=self.device, cfg_scale=cfg_scale)
 
         samples = vae.decode(samples / 0.18215).sample
         samples = torch.clamp(127.5 * samples + 128.0, 0, 255).permute(0, 2, 3, 1).to("cpu", dtype=torch.uint8).numpy()
@@ -279,7 +282,7 @@ class BaseExperiment(object):
         self.model = self.model.to(device)
         self.vae = self.vae.to(device)
 
-        sample_classes = self.config.sample_classes
+        sample_classes = self.config.sample_classes or 0
         n = len(sample_classes)
         z = torch.randn(n, 4, self.latent_size, self.latent_size, device=device)
         y = torch.tensor(sample_classes, device=device)
@@ -288,6 +291,8 @@ class BaseExperiment(object):
         print("sampling with guidance scale:", cfg_scale)
 
         samples = self.sample_imgs(z, y, cfg_scale)
+
+        # test clip score
 
         # save images
         for i, sample in enumerate(samples):
@@ -299,10 +304,11 @@ class BaseExperiment(object):
     def init_inference(self):
         path = self.config.ckpt_path
         self.load_checkpoint(path)
-        self.model.eval()
+        # self.model.eval()
 
         self.model = self.model.to(self.device)
         self.vae = self.vae.to(self.device)
+        # self.encoder = self.encoder.to(self.device)
 
     def inference(self):
         config = self.config

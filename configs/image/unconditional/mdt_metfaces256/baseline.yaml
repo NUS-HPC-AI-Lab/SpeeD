@@ -1,0 +1,5 @@
+experiment_dir: outputs/mdt_metfaces/base
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""

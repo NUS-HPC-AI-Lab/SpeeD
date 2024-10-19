@@ -39,7 +39,7 @@ class SpeeDiffusion(SpacedDiffusion):
             t = torch.multinomial(self.p, n // 2 + 1, replacement=True).to(device)
             dual_t = torch.where(t < self.meaningful_steps, self.meaningful_steps - t, t - self.meaningful_steps)
             t = torch.cat([t, dual_t], dim=0)[:n]
-            weights = self.weights
+            weights = None
         else:
             t = torch.randint(0, self.num_timesteps, (n,), device=device)
             weights = None

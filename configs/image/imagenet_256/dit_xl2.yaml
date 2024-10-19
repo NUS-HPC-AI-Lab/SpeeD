@@ -1,0 +1,17 @@
+model:
+  _target_: speed.networks.dit.DiT_XL_2
+
+experiment_dir: outputs/dit_xl2
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+data:
+  dataset:
+    _target_: speed.dataset.image.image_dataest
+    root: "root_path_dataset_ImageNet"
+    image_size: ${image_size}
+
+  batch_size: 8
+  num_workers: 4

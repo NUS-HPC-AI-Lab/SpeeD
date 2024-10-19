@@ -1,0 +1,11 @@
+experiment_dir: outputs/ffhq/quad_base
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+  noise_schedule: quad
+
+
+data:
+  dataset:
+    root: "root_path_dataset"

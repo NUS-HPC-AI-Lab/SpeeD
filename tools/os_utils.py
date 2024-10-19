@@ -1,3 +1,4 @@
+import json
 import os
 import warnings
 
@@ -26,3 +27,13 @@ def save_config(config, path):
         with open(os.path.join(path, config_name), "w") as f:
             OmegaConf.save(config, f)
             print("\033[31m save config to {} \033[0m".format(os.path.join(path, config_name)))
+
+
+def read_prompt_file_to_list(prompt_file):
+    # if is json
+    if prompt_file.endswith(".json"):
+        prompt_list = json.load(open(prompt_file, "r"))
+    elif prompt_file.endswith(".txt"):
+        with open(prompt_file, "r") as f:
+            prompt_list = f.readlines()
+    return prompt_list

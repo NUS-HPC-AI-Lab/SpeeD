@@ -8,26 +8,25 @@ ckpt_path:
 resume_training:
 
 # logging configuration
-ckpt_every: 50_000
+ckpt_every: 10000
 log_every: 100
 
 # tensorboard loss loggign
 enable_tensorboard_log: true
 
 # you must run wandb log before enable_wandb_log
-enable_wandb_log: false
+enable_wandb_log: true
 wandb_api_key: d72b5534e4e1c99522d1b8b106cb7b65ea764e59
 wandb:
   _target_: wandb.init
   project: diffusion-acceleration
-  name: debug
+  # name: experiment_dir + time
+  name:  ${experiment_dir}
   # you can add other argument likes group, entity in config
-  # entity
-  # group
 
-# save checkpoint first
-save_firt_step_ckpt: false
-
+# sample log in training
+enable_sample_log: false
+sample_log_every: 100
 
 # resume training path
 allow_tf32: true

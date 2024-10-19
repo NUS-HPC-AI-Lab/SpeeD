@@ -1,0 +1,4 @@
+experiment_dir: outputs/component/no_weight
+
+diffusion:
+  weighting: none

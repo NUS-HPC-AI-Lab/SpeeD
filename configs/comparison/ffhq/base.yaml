@@ -1,0 +1,9 @@
+data:
+  dataset:
+    root: "root_path_dataset"
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+experiment_dir: outputs/ffhq/base

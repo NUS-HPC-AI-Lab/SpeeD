@@ -85,6 +85,12 @@ def get_beta_schedule(beta_schedule, *, beta_start, beta_end, num_diffusion_time
         betas = beta_end * np.ones(num_diffusion_timesteps, dtype=np.float64)
     elif beta_schedule == "jsd":  # 1/T, 1/(T-1), 1/(T-2), ..., 1
         betas = 1.0 / np.linspace(num_diffusion_timesteps, 1, num_diffusion_timesteps, dtype=np.float64)
+
+    elif beta_schedule == "cosine":
+        return betas_for_alpha_bar(
+            num_diffusion_timesteps,
+            lambda t: math.cos((t + 0.008) / 1.008 * math.pi / 2) ** 2,
+        )
     else:
         raise NotImplementedError(beta_schedule)
     assert betas.shape == (num_diffusion_timesteps,)
@@ -114,6 +120,15 @@ def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
             num_diffusion_timesteps,
             lambda t: math.cos((t + 0.008) / 1.008 * math.pi / 2) ** 2,
         )
+
+    elif schedule_name in ["cosine", "const", "quad"]:
+        return get_beta_schedule(
+            schedule_name,
+            beta_start=0.0001,
+            beta_end=0.02,
+            num_diffusion_timesteps=num_diffusion_timesteps,
+        )
+
     else:
         raise NotImplementedError(f"unknown beta schedule: {schedule_name}")
 
