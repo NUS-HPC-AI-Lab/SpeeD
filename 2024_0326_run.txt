@@ -1,0 +1,9 @@
+torchrun --nnodes=xxx --nproc_per_node=8 main.py -c configs/image/imagenet_256/dit_xl2.yaml -p train data.dataset.root="xx" data.batch_size=64
+
+
+# 两张卡运行
+torchrun --nnodes=2 --nproc_per_node=8  --node_rank=0 --master_addr="localhost" --master_port=6122 main.py -c configs/image/imagenet_256/dit_xl2.yaml -p train data.dataset.root="/dev/shm/imagenet/ILSVRC/Data/CLS-LOC/train" data.batch_size=80
+
+torchrun --nnodes=2 --nproc_per_node=8  --node_rank=1 --master_addr="localhost" --master_port=6122 main.py -c configs/image/imagenet_256/dit_xl2.yaml -p train data.dataset.root="/dev/shm/imagenet/ILSVRC/Data/CLS-LOC/train" data.batch_size=80
+
+torchrun --nnodes=1 --nproc_per_node=8 main.py -c configs/image/imagenet_256/dit_xl2.yaml -p train data.dataset.root="/dev/shm/imagenet/ILSVRC/Data/CLS-LOC/train" data.batch_size=64
