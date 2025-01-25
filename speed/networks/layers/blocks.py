@@ -3,7 +3,7 @@ import math
 import numpy as np
 import torch
 import torch.nn as nn
-from timm.models.vision_transformer import Mlp
+from timm.models.vision_transformer import Mlp, PatchEmbed
 
 #################################################################################
 #                   Sine/Cosine Positional Embedding Functions                  #

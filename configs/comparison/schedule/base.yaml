@@ -3,7 +3,7 @@ data:
     root: /mnt/public/yuanzhihang/ffhq/images256x256/
 
 # diffusion:
-#   _target_: speedit.diffusion.iddpm.IDDPM
+#   _target_: speed.diffusion.iddpm.IDDPM
 #   timestep_respacing: ""
 
 # experiment_dir: /mnt/public/yuanzhihang/outputs/ffhq/base

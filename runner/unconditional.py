@@ -4,8 +4,8 @@ from time import time
 import torch
 import torch.distributed as dist
 
-from speedit.networks import *
-from speedit.utils.train_utils import *
+from speed.networks import *
+from speed.utils.train_utils import *
 from tools.common_utils import *
 from tools.log_utils import *
 from tools.os_utils import *

@@ -4,7 +4,7 @@ data:
 
 
 diffusion:
-  _target_: speedit.diffusion.iddpm.IDDPM
+  _target_: speed.diffusion.iddpm.IDDPM
   timestep_respacing: ""
 
 experiment_dir: outputs/metfaces/base

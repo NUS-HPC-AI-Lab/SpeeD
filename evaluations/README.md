@@ -6,13 +6,13 @@
 
 The metrics include FID, sFID, Precision, Recall, and Inception Score. Our calculation based on  [ADM's script](https://github.com/openai/guided-diffusion/tree/main/evaluations) which is based on Tensorflow.
 
-You can use script in  [SpeeDiT/evaluations/image](https://github.com/1zeryu/SpeeDiT/tree/master/evaluations/image)
+You can use script in  [speed/evaluations/image](https://github.com/1zeryu/speed/tree/master/evaluations/image)
 
 ```bash
 python evaluations/image/evaluator.py ref_npz_file sample_npz_file
 ```
 
- You can get more details about **reference file**  and **ADM's evaluation** in  [SpeeDiT/evaluations/image/ADM.md](https://github.com/1zeryu/SpeeDiT/blob/master/evaluations/image/ADM.md).
+ You can get more details about **reference file**  and **ADM's evaluation** in  [speed/evaluations/image/ADM.md](https://github.com/1zeryu/speed/blob/master/evaluations/image/ADM.md).
 
 * Pytorch
 

@@ -1,0 +1,50 @@
+seed: 0
+experiment_dir: outputs/ffhq/base
+experiment_name: unconditional
+ckpt_path: null
+resume_training: null
+ckpt_every: 50000
+log_every: 100
+enable_tensorboard_log: true
+enable_wandb_log: true
+wandb_api_key: d72b5534e4e1c99522d1b8b106cb7b65ea764e59
+wandb:
+  _target_: wandb.init
+  project: diffusion-acceleration
+  name: outputs/ffhq/base
+enable_sample_log: false
+sample_log_every: 100
+allow_tf32: true
+image_size: 256
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  weight_decay: 0
+vae:
+  _target_: diffusers.models.AutoencoderKL.from_pretrained
+  pretrained_model_name_or_path: transformers/sd-vae-ft-ema
+data:
+  dataset:
+    _target_: speed.dataset.image.image_dataset
+    image_size: 256
+    class_cond: false
+    root: ~/big_space/SamJ/data/Celeb-A/Img/img_align_celeba
+  batch_size: 32
+  num_workers: 4
+model:
+  _target_: speed.networks.dit.DiT_XL_2
+  condition: none
+sample:
+  diffusion:
+    timestep_respacing: '250'
+inference:
+  diffusion:
+    timestep_respacing: '250'
+  per_proc_batch_size: 32
+  num_samples: 10000
+epoch: 200000
+max_training_steps: 200000
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ''
+phase: train
