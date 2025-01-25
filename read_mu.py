@@ -1,7 +1,7 @@
 import os
 import random
 
-from speedit.dataset.transform import get_image_transform
+from speed.dataset.transform import get_image_transform
 
 image_transform = get_image_transform(256)
 sample_num = 500

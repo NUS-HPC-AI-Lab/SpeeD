@@ -5,7 +5,7 @@ import torch
 import torch.distributed as dist
 from PIL import Image
 
-from speedit.utils.train_utils import *
+from speed.utils.train_utils import *
 from tools.log_utils import *
 from tools.os_utils import *
 

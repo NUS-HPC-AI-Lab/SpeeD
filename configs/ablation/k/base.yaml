@@ -1,6 +1,6 @@
 data:
   dataset:
-    _target_: speedit.dataset.image.image_dataset
+    _target_: speed.dataset.image.image_dataset
     image_size: ${image_size}
     class_cond: false
     root: "/home/zyk/ffhq-dataset/images256x256"

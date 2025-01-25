@@ -324,7 +324,7 @@ class T5Encoder:
         #     self.shardformer_t5()
 
     # def shardformer_t5(self):
-    #     from speedit.utils.misc import requires_grad
+    #     from speed.utils.misc import requires_grad
     #
     #     shard_config = ShardConfig(
     #         tensor_parallel_process_group=None,
