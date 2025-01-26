@@ -20,7 +20,7 @@ data:
     class_cond: false
     root: "/home/zyk/ffhq-dataset/images256x256"
 
-  batch_size: 32
+  batch_size: 4 # origin 32, rebuttal 4
   num_workers: 4
 
 diffusion:

@@ -1,4 +1,4 @@
-experiment_dir: outputs/celeba/clts
+experiment_dir: outputs/imagenet/clts
 
 
 diffusion:

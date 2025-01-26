@@ -1,0 +1,13 @@
+data:
+  dataset:
+    root: /home/wangkai/big_space/SamJ/data/imagenet/train
+
+diffusion:
+  _target_: speed.diffusion.iddpm.IDDPM
+  timestep_respacing: ""
+
+experiment_dir: outputs/imagenet/base
+
+model:
+  _target_: speed.networks.dit.DiT_S_8
+  condition: none

@@ -16,7 +16,7 @@ data:
     root: "root_path_dataset_ImageNet"
     image_size: ${image_size}
 
-  batch_size: 32
+  batch_size: 4 # origin 32, rebuttal 4
   num_workers: 4
 
 inference:
