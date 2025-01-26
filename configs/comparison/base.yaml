@@ -9,7 +9,7 @@ optimizer:
 
 vae:
   _target_: diffusers.models.AutoencoderKL.from_pretrained
-  pretrained_model_name_or_path: "transformers/sd-vae-ft-ema"
+  pretrained_model_name_or_path: "transformers/sd-vae-ft-ema/"
 
 
 data:
@@ -18,7 +18,7 @@ data:
     image_size: ${image_size}
     class_cond: false
 
-  batch_size: 32
+  batch_size: 4 # 32
   num_workers: 4
 
 model:
@@ -40,4 +40,4 @@ epoch: 200_000
 max_training_steps: 200_000
 
 log_every: 100
-ckpt_every: 50_000
+ckpt_every: 10_000

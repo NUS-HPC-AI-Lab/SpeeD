@@ -1,6 +1,6 @@
 data:
   dataset:
-    root: ~/big_space/SamJ/data/Celeb-A/Img/img_align_celeba
+    root: /home/wangkai/big_space/SamJ/data/Celeb-A/Img/img_align_celeba
 
 diffusion:
   _target_: speed.diffusion.iddpm.IDDPM

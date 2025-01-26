@@ -29,7 +29,7 @@ def fetch_readme() -> str:
 
 
 setup(
-    name="speedit",
+    name="speed",
     version="1.0.0",
     packages=find_packages(
         exclude=(

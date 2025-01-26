@@ -3,10 +3,10 @@ experiment_dir: outputs/celeba/base
 experiment_name: unconditional
 ckpt_path: null
 resume_training: null
-ckpt_every: 50000
+ckpt_every: 10000
 log_every: 100
 enable_tensorboard_log: true
-enable_wandb_log: true
+enable_wandb_log: false
 wandb_api_key: d72b5534e4e1c99522d1b8b106cb7b65ea764e59
 wandb:
   _target_: wandb.init
@@ -22,14 +22,14 @@ optimizer:
   weight_decay: 0
 vae:
   _target_: diffusers.models.AutoencoderKL.from_pretrained
-  pretrained_model_name_or_path: transformers/sd-vae-ft-ema
+  pretrained_model_name_or_path: transformers/sd-vae-ft-ema/
 data:
   dataset:
     _target_: speed.dataset.image.image_dataset
     image_size: 256
     class_cond: false
-    root: ~/big_space/SamJ/data/Celeb-A/Img/img_align_celeba
-  batch_size: 32
+    root: /home/wangkai/big_space/SamJ/data/Celeb-A/Img/img_align_celeba
+  batch_size: 4
   num_workers: 4
 model:
   _target_: speed.networks.dit.DiT_XL_2

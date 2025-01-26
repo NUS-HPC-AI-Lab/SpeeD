@@ -10,8 +10,8 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-from speedit.networks import *
-from speedit.utils.train_utils import *
+from speed.networks import *
+from speed.utils.train_utils import *
 from tools.common_utils import *
 from tools.log_utils import *
 from tools.os_utils import *
