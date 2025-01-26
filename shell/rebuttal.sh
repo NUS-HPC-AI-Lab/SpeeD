@@ -16,3 +16,8 @@
 
 # New Baselines: DiT-S/8 on ImageNet
 CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29965 main.py -c configs/comparison/imagenet/faster.yaml -p train
+# CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29967 main.py -c configs/comparison/imagenet/base.yaml -p train
+# CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29968 main.py -c configs/comparison/imagenet/min_snr.yaml -p train
+# CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29969 main.py -c configs/comparison/imagenet/p2.yaml -p train
+# CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29961 main.py -c configs/comparison/imagenet/lognorm.yaml -p train
+# CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29962 main.py -c configs/comparison/imagenet/clts.yaml -p train
