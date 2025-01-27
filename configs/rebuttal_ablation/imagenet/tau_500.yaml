@@ -1,0 +1,4 @@
+experiment_dir: outputs/abl_imagenet/tau_500
+
+diffusion:
+  tau: 500

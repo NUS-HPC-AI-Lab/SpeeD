@@ -1,0 +1,4 @@
+experiment_dir: outputs/abl_imagenet/k_2
+
+diffusion:
+  k: 2

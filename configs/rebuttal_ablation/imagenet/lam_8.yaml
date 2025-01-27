@@ -1,0 +1,4 @@
+experiment_dir: outputs/abl/lam_8
+
+diffusion:
+  lam: 0.8

@@ -7,11 +7,20 @@
 # CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/comparison/celeba/lognorm.yaml -p train # 4090 env:speed
 # CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/comparison/celeba/clts.yaml -p train # v100 env:base
 
-# Ablation on k
+# rebuttal_Ablation on k
 
-# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/ablation/k/k_1.yaml -p train
-# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/ablation/k/k_10.yaml -p train
-# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/ablation/k/k_25.yaml -p train
+CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/rebuttal_ablation/imagenet/k_1.yaml -p train
+CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/rebuttal_ablation/imagenet/k_10.yaml -p train
+
+# rebuttal_Ablation on lambda
+
+# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/rebuttal_ablation/imagenet/lam_0.4.yaml -p train
+# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/rebuttal_ablation/imagenet/lam_0.8.yaml -p train
+
+# rebuttal_Ablation on tau
+
+# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/rebuttal_ablation/imagenet/tau_600.yaml -p train
+# CUDA_VISIBLE_DEVICES=4,5,6,7 ./torchrun --nproc_per_node=4 --master_port=29966 main.py -c configs/rebuttal_ablation/imagenet/tau_800.yaml -p train
 
 
 # New Baselines: DiT-S/8 on ImageNet
@@ -20,4 +29,4 @@
 # CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29968 main.py -c configs/comparison/imagenet/min_snr.yaml -p train
 # CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29969 main.py -c configs/comparison/imagenet/p2.yaml -p train
 # CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29961 main.py -c configs/comparison/imagenet/lognorm.yaml -p train
-CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29962 main.py -c configs/comparison/imagenet/clts.yaml -p train
+# CUDA_VISIBLE_DEVICES=0,1,2,3 ./torchrun --nproc_per_node=4 --master_port=29962 main.py -c configs/comparison/imagenet/clts.yaml -p train
