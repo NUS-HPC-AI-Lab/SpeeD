@@ -9,5 +9,5 @@ diffusion:
 experiment_dir: outputs/imagenet/base
 
 model:
-  _target_: speed.networks.dit.DiT_S_8 # S_8 for rebuttal
+  _target_: speed.networks.dit.DiT_S_8
   condition: none
